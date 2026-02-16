@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { SolanaProvider } from '../components/WalletProvider'
+import { SolanaProvider } from "../components/SolanaProvider";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Gov Encrypt',
-  description: 'Confidential Governance Layer',
+  title: "Gov Encrypt",
+  description: "Confidential Governance Layer",
 };
 
 export default function RootLayout({
@@ -17,12 +17,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={inter.className}
-      >
-        <SolanaProvider>
-          {children}
-        </SolanaProvider>
+      <body className={inter.className}>
+        <SolanaProvider>{children}</SolanaProvider>
       </body>
     </html>
   );

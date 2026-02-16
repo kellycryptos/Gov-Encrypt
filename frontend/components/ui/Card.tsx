@@ -1,16 +1,32 @@
-import { ReactNode } from "react";
+import React from 'react';
 
 interface CardProps {
-    children: ReactNode;
+    children: React.ReactNode;
+    header?: React.ReactNode;
+    footer?: React.ReactNode;
     className?: string;
-    title?: string;
+    onClick?: () => void;
 }
 
-export function Card({ children, className = "", title }: CardProps) {
+export const Card: React.FC<CardProps> = ({ children, header, footer, className = '', onClick }) => {
     return (
-        <div className={`p-6 rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)] shadow-sm ${className}`}>
-            {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
-            {children}
+        <div
+            className={`snapshot-card overflow-hidden ${onClick ? 'cursor-pointer' : ''} ${className}`}
+            onClick={onClick}
+        >
+            {header && (
+                <div className="px-6 py-4 border-b border-[var(--border)] bg-slate-50/30">
+                    {header}
+                </div>
+            )}
+            <div className="p-6">
+                {children}
+            </div>
+            {footer && (
+                <div className="px-6 py-4 bg-slate-50/30 border-t border-[var(--border)]">
+                    {footer}
+                </div>
+            )}
         </div>
     );
-}
+};

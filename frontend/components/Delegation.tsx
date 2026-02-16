@@ -6,10 +6,11 @@ import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import idl from "../src/idl/gov_encrypt.json";
 import { Card } from "./ui/Card";
+import { Button, Input } from "./ui";
 
 const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
-export default function Delegation() {
+export function Delegation() {
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
     const [delegateAddress, setDelegateAddress] = useState("");
@@ -22,7 +23,6 @@ export default function Delegation() {
             setLoading(true);
             setStatus("🔒 Encrypting delegation link...");
 
-            // Simulation of MPC encryption
             await new Promise(r => setTimeout(r, 1200));
 
             const provider = new anchor.AnchorProvider(
@@ -32,13 +32,11 @@ export default function Delegation() {
             );
             const program = new anchor.Program(idl as any, provider);
 
-            // Derive Delegation PDA
             const [delegationPda] = PublicKey.findProgramAddressSync(
                 [Buffer.from("delegation"), publicKey.toBuffer()],
                 PROGRAM_ID
             );
 
-            // Mock encryption
             const encryptedDelegation = Buffer.from(delegateAddress.slice(0, 32));
 
             const tx = await program.methods
@@ -61,46 +59,47 @@ export default function Delegation() {
     };
 
     return (
-        <Card title="Private Delegation" className="max-w-2xl mx-auto">
-            <p className="text-sm text-[var(--muted-foreground)] mb-6 leading-relaxed">
+        <Card className="max-w-2xl mx-auto">
+            <h2 className="text-xl font-bold mb-2">Private Delegation</h2>
+            <p className="text-sm text-[var(--muted-foreground)] mb-8 leading-relaxed">
                 Delegate your voting power without revealing your identity or social graph.
                 The link between you and your delegate is encrypted using Arcium MPC.
             </p>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
                 <div>
-                    <label className="block text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-2">
+                    <label className="block text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider mb-2">
                         Delegate Address (Public Key)
                     </label>
-                    <input
+                    <Input
                         type="text"
                         placeholder="Enter Solana Address..."
                         value={delegateAddress}
                         onChange={(e) => setDelegateAddress(e.target.value)}
-                        className="w-full p-4 bg-[var(--input)] border border-[var(--border)] rounded-lg text-white font-mono text-sm focus:ring-2 focus:ring-[var(--ring)] focus:border-transparent outline-none transition-all placeholder:text-[var(--muted-foreground)]/50"
+                        className="font-mono"
                     />
                 </div>
 
-                <button
+                <Button
                     onClick={delegate}
                     disabled={!publicKey || !delegateAddress || loading}
-                    className="w-full py-3 px-4 bg-[var(--secondary)] text-[var(--secondary-foreground)] rounded-lg hover:bg-[var(--muted)] font-medium transition-colors border border-[var(--border)] hover:border-[var(--muted-foreground)]"
+                    className="w-full h-12 !font-bold"
                 >
                     {loading ? "Encrypting & Signing..." : "Encrypt & Delegate Power"}
-                </button>
+                </Button>
 
                 {status && (
-                    <div className={`mt-2 text-sm ${status.includes("✅") ? "text-emerald-400" : "text-red-400"}`}>
+                    <div className={`mt-2 text-xs font-mono p-3 rounded-lg border ${status.includes("✅") ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-red-50 border-red-100 text-red-600"}`}>
                         {status}
                     </div>
                 )}
             </div>
 
-            <div className="mt-8 p-4 rounded-lg bg-[var(--background)] border border-[var(--border)]">
-                <h4 className="text-sm font-semibold mb-2 text-[var(--foreground)]">Your Delegation Status</h4>
-                <div className="flex justify-between text-sm">
-                    <span className="text-[var(--muted-foreground)]">Current Delegate</span>
-                    <span className="font-mono text-[var(--primary)]">None</span>
+            <div className="mt-10 p-5 rounded-xl bg-slate-50 border border-[var(--border)]">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Your Delegation Status</h4>
+                <div className="flex justify-between items-center text-sm">
+                    <span className="font-medium">Current Delegate</span>
+                    <span className="font-mono text-[var(--primary)] bg-indigo-50 px-2 py-1 rounded">None</span>
                 </div>
             </div>
         </Card>

@@ -1,52 +1,70 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f172a; /* Slate 900 */
-  --foreground: #f8fafc; /* Slate 50 */
-  --card: #1e293b; /* Slate 800 */
-  --card-foreground: #f8fafc;
-  --primary: #6366f1; /* Indigo 500 */
+  --background: #fdfcfd;
+  /* Off-white pastel */
+  --foreground: #1e293b;
+  /* Dark slate text */
+  --card: #ffffff;
+  --card-foreground: #1e293b;
+  --primary: #9aa5ff;
+  /* Soft pastel purple/blue */
   --primary-foreground: #ffffff;
-  --secondary: #334155; /* Slate 700 */
-  --secondary-foreground: #f8fafc;
-  --muted: #475569; /* Slate 600 */
-  --muted-foreground: #94a3b8; /* Slate 400 */
-  --accent: #0ea5e9; /* Sky 500 */
-  --accent-foreground: #ffffff;
-  --destructive: #ef4444; /* Red 500 */
-  --destructive-foreground: #ffffff;
-  --border: #334155;
-  --input: #334155;
-  --ring: #6366f1;
+  --secondary: #f1f5f9;
+  /* Soft grey */
+  --secondary-foreground: #475569;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --accent: #dbeafe;
+  /* Soft sky blue */
+  --accent-foreground: #1e40af;
+  --destructive: #fee2e2;
+  /* Soft pastel red */
+  --destructive-foreground: #991b1b;
+  --border: #f1f5f9;
+  --input: #ffffff;
+  --ring: #9aa5ff;
+  --radius: 0.75rem;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-.glass-panel {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.snapshot-card {
+  background: white;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-primary {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-  transition: all 0.2s;
+.snapshot-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(154, 165, 255, 0.1);
 }
 
-.btn-primary:hover {
-  background-color: #4f46e5; /* Indigo 600 */
+.pastel-badge {
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.btn-secondary {
-  background-color: var(--secondary);
-  color: var(--secondary-foreground);
+.progress-bar-container {
+  height: 8px;
+  background: var(--secondary);
+  border-radius: 9999px;
+  overflow: hidden;
 }
 
-.btn-secondary:hover {
-  background-color: #475569;
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 1s ease-out;
 }

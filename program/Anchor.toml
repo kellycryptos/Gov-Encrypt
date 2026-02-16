@@ -1,17 +1,20 @@
+[workspace]
+types = "program/target/types"
+
 [toolchain]
 
 [features]
 seeds = false
 skip-lint = false
 
-[programs.localnet]
+[programs.devnet]
 gov_encrypt = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

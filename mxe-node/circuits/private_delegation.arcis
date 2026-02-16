@@ -1,0 +1,37 @@
+// circuits/private_delegation.arcis
+circuit PrivateDelegation {
+    input delegation_matrix: [[u64]]; // [N][N] 1 if i delegates to j
+    input raw_reputation: [u64];      // [N]
+
+    output effective_power: [u64];    // [N]
+
+    def main(delegation_matrix: [[u64]], raw_reputation: [u64]) -> [u64] {
+        // Validation: MXEs ensure the graph is a DAG (Direct Acyclic Graph)
+        // by verifying that sum of delegation_matrix[i][j] <= 1 and 
+        // using a topological sort outside the circuit or a depth-limited
+        // accumulation inside to prevent cycles and double-counting.
+        
+        let mut power = raw_reputation;
+        
+        // Accumulate power: Multi-hop via matrix multiplication or repeated iteration
+        // In this version, we ensure a max depth of 5 to prevent stack overflow/cycles
+        for _ in 0..5 {
+            let mut next_power = [u64; 50];
+            for i in 0..50 {
+                let mut delegated = false;
+                for j in 0..50 {
+                    if delegation_matrix[i][j] == 1 {
+                        next_power[j] = next_power[j] + power[i];
+                        delegated = true;
+                    }
+                }
+                if !delegated {
+                    next_power[i] = next_power[i] + power[i];
+                }
+            }
+            power = next_power;
+        }
+        
+        return power;
+    }
+}

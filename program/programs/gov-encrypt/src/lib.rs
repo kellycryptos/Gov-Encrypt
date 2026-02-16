@@ -59,13 +59,25 @@ pub mod gov_encrypt {
         ctx: Context<SubmitVote>, 
         encrypted_vote_blob: Vec<u8>
     ) -> Result<()> {
+        let proposal = &ctx.accounts.proposal;
+        let now = Clock::get()?.unix_timestamp;
+
+        require!(
+            now >= proposal.start_time,
+            GovError::VotingNotStarted
+        );
+        require!(
+            now <= proposal.end_time,
+            GovError::VotingEnded
+        );
+
         let vote_account = &mut ctx.accounts.encrypted_vote_account;
         vote_account.voter = ctx.accounts.voter.key();
-        vote_account.proposal_id = ctx.accounts.proposal.id;
+        vote_account.proposal_id = proposal.id;
         vote_account.encrypted_blob = encrypted_vote_blob;
-        vote_account.timestamp = Clock::get()?.unix_timestamp;
+        vote_account.timestamp = now;
         
-        msg!("Encrypted vote submitted for proposal: {}", ctx.accounts.proposal.id);
+        msg!("Encrypted vote submitted for proposal: {}", proposal.id);
         Ok(())
     }
 
@@ -352,8 +364,10 @@ pub enum ProposalStatus {
 pub enum GovError {
     #[msg("The provided MPC node is not authorized to submit results.")]
     UnauthorizedNode,
-    #[msg("Voting period has not ended.")]
-    VotingNotEnded,
+    #[msg("Voting period has not started.")]
+    VotingNotStarted,
+    #[msg("Voting period has ended.")]
+    VotingEnded,
     #[msg("Insufficient reputation for this action.")]
     InsufficientReputation,
 }

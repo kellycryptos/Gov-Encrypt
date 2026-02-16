@@ -26,11 +26,14 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "next/*": [
+        "../node_modules/next/*"
+      ],
+      "next": [
+        "../node_modules/next"
       ]
-    },
-    "types": [
-      "node"
-    ]
+    }
   },
   "include": [
     "next-env.d.ts",

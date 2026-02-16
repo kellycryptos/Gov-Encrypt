@@ -6,6 +6,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import idl from "../src/idl/gov_encrypt.json";
 import { Card } from "./ui/Card";
+import { Button } from "./ui";
 
 const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
@@ -38,11 +39,6 @@ export default function Vote({ proposalId }: { proposalId: number }) {
 
             const program = new anchor.Program(idl as any, provider);
 
-            const [daoStatePda] = PublicKey.findProgramAddressSync(
-                [Buffer.from("dao_state")],
-                PROGRAM_ID
-            );
-
             const [proposalPda] = PublicKey.findProgramAddressSync(
                 [Buffer.from("proposal"), new anchor.BN(proposalId).toArrayLike(Buffer, "le", 8)],
                 PROGRAM_ID
@@ -74,46 +70,43 @@ export default function Vote({ proposalId }: { proposalId: number }) {
     };
 
     return (
-        <Card title="Cast Private Vote" className="max-w-2xl mx-auto">
-            <div className="flex gap-4 mb-6">
-                <button
+        <Card className="max-w-xl mx-auto">
+            <h3 className="text-lg font-bold mb-6">Cast Private Vote</h3>
+            <div className="grid grid-cols-2 gap-4 mb-8">
+                <Button
+                    variant={voteChoice === 1 ? 'primary' : 'outline'}
                     onClick={() => setVoteChoice(1)}
-                    className={`flex-1 py-4 px-6 rounded-lg border transition-all font-semibold ${voteChoice === 1
-                        ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
-                        : 'border-[var(--border)] hover:bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-white'
-                        }`}
+                    className={`h-16 text-base !rounded-xl ${voteChoice === 1 ? 'shadow-indigo-100 shadow-xl' : ''}`}
                 >
                     Approve
-                </button>
-                <button
+                </Button>
+                <Button
+                    variant={voteChoice === 0 ? 'primary' : 'outline'}
                     onClick={() => setVoteChoice(0)}
-                    className={`flex-1 py-4 px-6 rounded-lg border transition-all font-semibold ${voteChoice === 0
-                        ? 'border-red-500 bg-red-500/10 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
-                        : 'border-[var(--border)] hover:bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-white'
-                        }`}
+                    className={`h-16 text-base !rounded-xl !bg-rose-50 !text-rose-500 !border-rose-100 font-bold ${voteChoice === 0 ? '!bg-rose-500 !text-white !border-transparent shadow-rose-100 shadow-xl' : ''}`}
                 >
                     Reject
-                </button>
+                </Button>
             </div>
 
-            <button
+            <Button
                 onClick={castVote}
                 disabled={!publicKey || voteChoice === null || loading}
-                className="w-full py-3 px-4 bg-[var(--primary)] text-white rounded-lg hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-all shadow-md hover:shadow-lg"
+                className="w-full h-12 !font-extrabold shadow-sm"
             >
                 {loading ? "Processing Encryption..." : "Submit Encrypted Vote"}
-            </button>
+            </Button>
 
             {status && (
-                <div className={`mt-4 p-3 rounded-lg text-sm font-mono border ${status.includes("✅") ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : "bg-[var(--background)] border-[var(--border)] text-[var(--muted-foreground)]"}`}>
+                <div className={`mt-6 p-4 rounded-xl text-xs font-mono border ${status.includes("✅") ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-slate-50 border-slate-200 text-slate-500"}`}>
                     {status}
                 </div>
             )}
 
-            <div className="mt-6 pt-4 border-t border-[var(--border)] flex justify-between items-center text-xs text-[var(--muted-foreground)]">
+            <div className="mt-8 pt-6 border-t border-[var(--border)] flex justify-between items-center text-[10px] uppercase font-bold tracking-widest text-[var(--muted-foreground)]">
                 <span className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Arcium MPC Active
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Arcium MPC Protocol
                 </span>
                 <span>End-to-End Encrypted</span>
             </div>

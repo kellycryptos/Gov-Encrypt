@@ -3,17 +3,13 @@
   "private": true,
   "workspaces": [
     "frontend",
-    "programs/*",
-    "relayer"
+    "mxe-node"
   ],
   "scripts": {
     "build": "npm run build -w frontend",
-    "test": "npm test --workspaces --if-present",
-    "lint": "npm run lint --workspaces --if-present",
-    "validator": "docker compose up -d"
+    "mxe-node": "npm start -w mxe-node"
   },
-  "overrides": {
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
+  "dependencies": {
+    "@solana/web3.js": "^1.98.4"
   }
 }
