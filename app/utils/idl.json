@@ -1,0 +1,211 @@
+{
+    "version": "0.1.0",
+    "name": "gov_encrypt",
+    "instructions": [
+        {
+            "name": "initializeDao",
+            "accounts": [
+                {
+                    "name": "daoState",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "authority",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "quorumThreshold",
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "createProposal",
+            "accounts": [
+                {
+                    "name": "daoState",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "proposal",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "proposer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "cid",
+                    "type": "string"
+                },
+                {
+                    "name": "startTime",
+                    "type": "i64"
+                },
+                {
+                    "name": "endTime",
+                    "type": "i64"
+                }
+            ]
+        },
+        {
+            "name": "submitEncryptedVote",
+            "accounts": [
+                {
+                    "name": "voteAccount",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "proposal",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "voter",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "encryptedVoteBlob",
+                    "type": "bytes"
+                }
+            ]
+        },
+        {
+            "name": "delegatePrivately",
+            "accounts": [
+                {
+                    "name": "delegation",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "delegator",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "encryptedDelegationBlob",
+                    "type": "bytes"
+                }
+            ]
+        }
+    ],
+    "accounts": [
+        {
+            "name": "DaoState",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "authority",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "proposalCount",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "quorumThreshold",
+                        "type": "u64"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Proposal",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "proposer",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "cid",
+                        "type": "string"
+                    },
+                    {
+                        "name": "startTime",
+                        "type": "i64"
+                    },
+                    {
+                        "name": "endTime",
+                        "type": "i64"
+                    },
+                    {
+                        "name": "status",
+                        "type": {
+                            "defined": "ProposalStatus"
+                        }
+                    },
+                    {
+                        "name": "finalYesVotes",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "finalNoVotes",
+                        "type": "u64"
+                    }
+                ]
+            }
+        }
+    ],
+    "types": [
+        {
+            "name": "ProposalStatus",
+            "type": {
+                "kind": "enum",
+                "variants": [
+                    {
+                        "name": "Active"
+                    },
+                    {
+                        "name": "Passed"
+                    },
+                    {
+                        "name": "Failed"
+                    }
+                ]
+            }
+        }
+    ]
+}

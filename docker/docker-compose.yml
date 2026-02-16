@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  solana-validator:
+    image: solanalabs/solana:v1.18.26
+    command: solana-test-validator --reset --ledger /ledger
+    ports:
+      - "8899:8899"
+      - "8900:8900"
+    volumes:
+      - ./ledger:/ledger
+    networks:
+      - gov-encrypt-net
+
+  arcium-node:
+    image: arcium/node:latest
+    # hypothetical image/command based on Arcium usage; replace with actual specific image if available or mock
+    # using a placeholder for now as specific public image might not be 'arcium/node'
+    # Assuming local dev setup for Arcium
+    command: ["start-node", "--dev"]
+    ports:
+      - "5000:5000"
+    networks:
+      - gov-encrypt-net
+    depends_on:
+      - solana-validator
+
+networks:
+  gov-encrypt-net:
+    driver: bridge
