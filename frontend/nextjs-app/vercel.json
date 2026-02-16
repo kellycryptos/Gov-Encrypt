@@ -1,5 +1,5 @@
 {
-    "buildCommand": "next build",
+    "buildCommand": "next build --webpack",
     "installCommand": "npm install --legacy-peer-deps",
     "outputDirectory": ".next",
     "framework": "nextjs"
