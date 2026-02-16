@@ -1,103 +1,111 @@
-# Gov Encrypt - Production-Ready Confidential Governance
+# 🗂 1. Project Folder Structure
 
-This project is a decentralized confidential governance protocol built on Solana, utilizing Arcium for privacy-preserving computations.
+my-confidential-dao/
+│
+├── program/                  # Anchor smart contract
+│   ├── Cargo.toml
+│   ├── Anchor.toml
+│   ├── src/
+│   │   └── lib.rs            # DAO program: proposals, delegation, voting
+│   └── migrations/
+│       └── deploy.rs
+│
+├── mxe-node/                 # Arcium confidential compute
+│   ├── Dockerfile
+│   ├── config/
+│   │   └── node-config.json
+│   └── scripts/
+│       └── start-mxe.sh
+│
+├── frontend/                 # Next.js UI
+│   ├── package.json
+│   ├── next.config.js
+│   ├── tailwind.config.js    # Optimized for styling
+│   ├── app/                  # (Using App Router)
+│   ├── components/
+│   │   ├── ProposalCard.tsx
+│   │   ├── Vote.tsx          # (Integrated VoteButton)
+│   │   └── Delegation.tsx    # (Integrated DelegationWidget)
+│   └── utils/
+│       ├── solana.ts         # RPC & program ID
+│       └── arcium.ts         # MXE interaction
+│
+└── README.md
 
-## 🏗 Architecture Layers
+⸻
 
-- **/program**: Anchor smart contract (Rust). Defines the governance logic on-chain.
-- **/mxe-node**: Arcium confidential compute node & Relayer. Handles encrypted voting data and MPC flows.
-- **/frontend**: Next.js web application. User interface for voting and delegation.
+# 🏗 2. Key Details per Layer
 
----
+### /program — Anchor DAO
+ • Handles: proposal creation, vote recording, delegation logic
+ • Build: locally via Anchor
+ • Deploy: `anchor build && anchor deploy --provider.cluster devnet`
+ • Program ID: export to .env and use in frontend
 
-## 🛠 Local Development
-
-### 1. Prerequisites
-- **Solana CLI 2.3.0**
-- **Anchor 0.32.1**
-- **Rust stable**
-- **Node.js >= 18**
-- **Docker & Docker Compose**
-
-### 2. Setup
+### /mxe-node — Arcium MXE
+ • Handles: confidential vote/delegation processing
+ • Dockerized: ensures it runs anywhere
+ • Workflow: frontend sends encrypted vote → MXE tallies → final result written to Devnet program
+ • Start Command:
 ```bash
-# Install dependencies
-npm install
-
-# Start local Solana validator (optional, for local testing)
-solana-test-validator
+cd mxe-node
+docker build -t arcium-mxe .
+docker run -d --name arcium-mxe -p 8080:8080 arcium-mxe
 ```
 
-### 3. Run Frontend
+### /frontend — Next.js DAO UI
+ • Connects to:
+ • Devnet RPC (`NEXT_PUBLIC_RPC=https://api.devnet.solana.com`)
+ • Deployed program ID (`NEXT_PUBLIC_PROGRAM_ID`)
+ • Arcium MXE endpoint (`NEXT_PUBLIC_ARCIUM_ENDPOINT`)
+ • Functionality:
+ • Proposal creation
+ • Vote submission (encrypted)
+ • Delegation
+ • Display final tally from Arcium
+ • Deploy: only frontend → Vercel
+ • No Rust, no Docker, no MXE build inside Vercel
+
+⸻
+
+# ⚡ 3. Deployment & Testing Flow
+ 1. **Anchor Program**
+```bash
+cd program
+solana config set --url https://api.devnet.solana.com
+solana airdrop 2
+anchor build
+anchor deploy
+```
+
+ 2. **Arcium MXE**
+```bash
+cd mxe-node
+sh scripts/start-mxe.sh
+```
+
+ 3. **Frontend**
 ```bash
 cd frontend
+npm install
+# Set NEXT_PUBLIC_RPC, NEXT_PUBLIC_PROGRAM_ID, NEXT_PUBLIC_ARCIUM_ENDPOINT
 npm run dev
 ```
 
-### 4. Run MXE Node (Relayer)
-```bash
-cd mxe-node
-npm install
-npm start
-```
+ 4. **Test Flow**
+ • Wallet 1 → create proposal
+ • Wallet 2 → delegate votes
+ • Wallet 3 → vote
+ • Arcium MXE → tallies votes confidentially
+ • Frontend reads final tally and displays
 
----
+⸻
 
-## 🚀 Smart Contract Deployment
-
-Smart contracts must be deployed manually. Do **not** attempt to build Rust/Anchor on Vercel.
-
-1. **Build the program**:
-   ```bash
-   cd program
-   anchor build
-   ```
-2. **Deploy to Devnet/Mainnet**:
-   ```bash
-   anchor deploy --provider.cluster devnet
-   ```
-3. **Copy IDL**:
-   Copy `program/target/idl/gov_encrypt.json` to `frontend/src/idl/gov_encrypt.json`.
-
----
-
-## ☁️ VPS Setup (MXE Node - Ubuntu)
-
-The MXE node handles confidential computation and should be hosted on a persistent VPS (e.g., DigitalOcean, AWS).
-
-1. **Install Docker**:
-   ```bash
-   sudo apt update && sudo apt install docker.io docker-compose -y
-   ```
-2. **Deploy Node**:
-   ```bash
-   cd mxe-node
-   docker-compose up -d
-   ```
-3. **Expose Ports**:
-   Ensure port `3001` (or your configured Relayer port) is open in your firewall.
-
----
-
-## 🌐 Vercel Deployment (Frontend)
-
-Vercel is optimized to build **only** the `/frontend` directory.
-
-### Project Settings
-- **Framework Preset**: Next.js
-- **Root Directory**: `frontend`
-- **Build Command**: `next build`
-- **Install Command**: `npm install --legacy-peer-deps`
-
-### Environment Variables
-Configure these in the Vercel dashboard:
-- `NEXT_PUBLIC_SOLANA_RPC`: Your Solana RPC endpoint (e.g., Helius, Quicknode).
-- `NEXT_PUBLIC_PROGRAM_ID`: The ID of your deployed smart contract.
-- `NEXT_PUBLIC_RELAYER_URL`: The public URL of your VPS-hosted MXE node.
-
----
-
-## ✅ Stability & Reliability
-- **Isolated Builds**: Vercel ignores Rust/Cargo, preventing timeout and memory issues.
-- **Manual Control**: Smart contract upgrades are controlled via Solana CLI.
-- **Persistent MPC**: Arcium nodes run in Docker on dedicated hardware for reliability.
+# 📝 4. Devnet Checklist
+ • Wallets set to Devnet
+ • Program ID updated in frontend .env
+ • Devnet SOL funded
+ • MXE node running and reachable
+ • Frontend deployed to Vercel only
+ • Delegation and voting tested
+ • Proposal execution after deadline verified

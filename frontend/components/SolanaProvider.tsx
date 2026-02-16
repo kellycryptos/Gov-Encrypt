@@ -9,7 +9,7 @@ import { useMemo } from "react";
 
 export function SolanaProvider({ children }: { children: React.ReactNode }) {
     const network = WalletAdapterNetwork.Devnet;
-    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+    const endpoint = useMemo(() => process.env.NEXT_PUBLIC_SOLANA_RPC || clusterApiUrl(network), [network]);
     const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
     return (

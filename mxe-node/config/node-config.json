@@ -1,0 +1,5 @@
+{
+    "network": "devnet",
+    "port": 8080,
+    "mxe_enabled": true
+}
