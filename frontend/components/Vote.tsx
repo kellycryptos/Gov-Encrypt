@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import idl from "../../utils/idl.json";
-import { Card } from "../ui/Card";
+import idl from "../src/idl/gov_encrypt.json";
+import { Card } from "./ui/Card";
 
 const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
@@ -79,8 +79,8 @@ export default function Vote({ proposalId }: { proposalId: number }) {
                 <button
                     onClick={() => setVoteChoice(1)}
                     className={`flex-1 py-4 px-6 rounded-lg border transition-all font-semibold ${voteChoice === 1
-                            ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
-                            : 'border-[var(--border)] hover:bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-white'
+                        ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                        : 'border-[var(--border)] hover:bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-white'
                         }`}
                 >
                     Approve
@@ -88,8 +88,8 @@ export default function Vote({ proposalId }: { proposalId: number }) {
                 <button
                     onClick={() => setVoteChoice(0)}
                     className={`flex-1 py-4 px-6 rounded-lg border transition-all font-semibold ${voteChoice === 0
-                            ? 'border-red-500 bg-red-500/10 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
-                            : 'border-[var(--border)] hover:bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-white'
+                        ? 'border-red-500 bg-red-500/10 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
+                        : 'border-[var(--border)] hover:bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-white'
                         }`}
                 >
                     Reject

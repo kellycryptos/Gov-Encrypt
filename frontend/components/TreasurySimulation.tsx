@@ -9,10 +9,24 @@ export default function TreasurySimulation() {
 
     const runSimulation = async () => {
         setSimulating(true);
-        // Mock MPC delay
-        await new Promise(r => setTimeout(r, 2000));
-        setRiskScore(Math.floor(Math.random() * 100)); // 0-100 risk score
-        setSimulating(false);
+        try {
+            const relayerUrl = process.env.NEXT_PUBLIC_RELAYER_URL || "http://localhost:3001";
+            const response = await fetch(`${relayerUrl}/api/simulate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ proposalId: 1 }) // Mock proposal ID
+            });
+            const data = await response.json();
+            if (data.success && data.riskScore !== undefined) {
+                setRiskScore(data.riskScore);
+            } else {
+                console.error("Simulation failed:", data);
+            }
+        } catch (error) {
+            console.error("Error connecting to relayer:", error);
+        } finally {
+            setSimulating(false);
+        }
     };
 
     return (

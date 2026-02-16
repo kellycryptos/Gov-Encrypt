@@ -2,18 +2,18 @@
   "name": "gov-encrypt-monorepo",
   "private": true,
   "workspaces": [
-    "frontend/nextjs-app",
+    "frontend",
     "programs/*",
-    "backend/arcium-relayer"
+    "relayer"
   ],
   "scripts": {
-    "build": "npm run build -w frontend/nextjs-app",
+    "build": "npm run build -w frontend",
     "test": "npm test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "validator": "docker compose up -d"
   },
   "overrides": {
-    "react": "$react",
-    "react-dom": "$react-dom"
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
   }
 }

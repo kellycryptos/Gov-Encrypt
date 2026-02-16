@@ -1,41 +1,73 @@
-# Gov Encrypt: The Confidential Governance Layer
+# Gov Encrypt Protocol
 
-[![Gov Encrypt CI](https://github.com/kellycryptos/Gov-Encrypt/actions/workflows/ci.yml/badge.svg)](https://github.com/kellycryptos/Gov-Encrypt/actions/workflows/ci.yml)
+**The Confidential Governance Layer for Serious DAOs.**
 
-**Gov Encrypt** is a production-grade, privacy-native governance protocol for institutional DAOs. Built on **Solana** and powered by **Arcium MPC**, it ensures that sensitive governance data—votes, delegation graphs, and reputation—remain confidential while enabling verifiable, aggregated decision-making.
+Gov Encrypt provides end-to-end privacy for DAO governance using Solana and Arcium MPC.
 
-## 🏗 Architecture
+## Features
+- **Private Voting**: Encrypted ballots tallied via MPC.
+- **Confidential Delegation**: Delegate voting power without revealing social graph.
+- **Risk Simulation**: Preview treasury impacts with privacy-preserving simulations.
+- **Reputation Quorum**: Weighted voting based on encrypted reputation scores.
 
-```mermaid
-graph TD
-    User[Institutional User] -->|Encrypted Vote| Client[Next.js Frontend]
-    Client -->|MPC Proof| Solana[Solana Program]
-    Solana -->|Trigger| MPC[Arcium MPC Network]
-    MPC -->|Aggregated Tally| Solana
-    Solana -->|State Update| Result[Dashboard]
-```
+## Architecture
 
-## 🏦 Token Model
+This monorepo is structured for strict separation of concerns:
 
-| Asset | Type | Purpose |
-| :--- | :--- | :--- |
-| **$GOVE** | SPL Token | Native governance and staking asset. |
-| **eREP** | Soulbound | Encrypted reputation earned via participation. |
+- `/frontend`: Next.js 15 application (Vercel deployable).
+- `/relayer`: Node.js/Express service for Arcium orchestration.
+- `/programs`: Solana Anchor smart contracts.
+- `/circuits`: Arcium MPC circuits.
+- `/docs`: System architecture documentation.
 
-## 🚀 Status & Roadmap
-- [x] **v1.0**: Institutional UI & Multi-Circuit MPC Sync.
-- [ ] **v1.1**: Compliance-Ready ZK-Proof Export.
-- [ ] **v2.0**: Cross-Chain Confidential Governance.
+## Getting Started
 
-## 🛠 Setup & Deployment
+### Prerequisites
+- Node.js >= 18
+- Rust & Anchor (for Solana development)
+- Docker (for local validator, optional)
 
-### Local Environment
+### Installation
+
 ```bash
-docker-compose up -d
+# Install dependencies for all workspaces
+npm install
 ```
 
-### Devnet Deployment
-Refer to [devnet_deployment.md](./devnet_deployment.md).
+### Local Development
 
-## 📄 License
-This project is licensed under the **MIT License**.
+1. **Start Local Validator (Optional)**
+   ```bash
+   solana-test-validator
+   ```
+
+2. **Start Relayer**
+   ```bash
+   cd relayer
+   npm run build
+   node dist/index.js
+   ```
+
+3. **Start Frontend**
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+## Deployment
+
+### Vercel (Frontend)
+The `/frontend` directory is ready for Vercel deployment.
+1. Add new project in Vercel.
+2. Set Root Directory to `frontend`.
+3. Configure Environment Variables:
+   - `NEXT_PUBLIC_PROGRAM_ID`: Your deployed program ID.
+   - `NEXT_PUBLIC_RPC_URL`: Solana RPC URL.
+   - `NEXT_PUBLIC_RELAYER_URL`: URL of your deployed Relayer service.
+   - `NEXT_PUBLIC_ARCIUM_ENDPOINT`: Arcium API endpoint.
+
+### Relayer
+Deploy `/relayer` to any Node.js hosting provider. Ensure it has access to Arcium network and Solana RPC.
+
+## Documentation
+See [docs/architecture.md](docs/architecture.md) for detailed system design.

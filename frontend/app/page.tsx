@@ -1,6 +1,6 @@
 "use client";
 
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import "@solana/wallet-adapter-react-ui/styles.css";
 import dynamic from 'next/dynamic';
 import { useState } from "react";
 import Vote from "../components/Vote";
@@ -16,6 +16,22 @@ const WalletButton = dynamic(
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'governance' | 'delegation' | 'treasury'>('governance');
+  const [quorum, setQuorum] = useState({ percentage: 0, status: 'Loading...' });
+
+  const fetchQuorum = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_RELAYER_URL || 'http://localhost:3001'}/api/quorum`);
+      const data = await res.json();
+      setQuorum(data);
+    } catch (e) {
+      console.error("Failed to fetch quorum", e);
+      setQuorum({ percentage: 84, status: 'Standard (Fallback)' });
+    }
+  };
+
+  useState(() => {
+    fetchQuorum();
+  });
 
   return (
     <main className="min-h-screen pb-20 bg-[var(--background)]">
@@ -54,8 +70,8 @@ export default function Home() {
           </Card>
           <Card className="bg-slate-900/40 border-slate-800">
             <div className="text-[var(--muted-foreground)] text-[10px] font-bold uppercase tracking-widest mb-1">Quorum Status</div>
-            <div className="text-2xl font-bold text-white">84%</div>
-            <div className="text-[10px] text-slate-500 mt-1">Institutional Weighted</div>
+            <div className="text-2xl font-bold text-white">{quorum.percentage}%</div>
+            <div className="text-[10px] text-slate-500 mt-1">{quorum.status}</div>
           </Card>
           <Card className="bg-slate-900/40 border-slate-800">
             <div className="text-[var(--muted-foreground)] text-[10px] font-bold uppercase tracking-widest mb-1">Encrypted Votes</div>
@@ -71,8 +87,8 @@ export default function Home() {
               key={tab}
               onClick={() => setActiveTab(tab as any)}
               className={`px-6 py-4 font-medium transition-all border-b-2 text-sm uppercase tracking-wide whitespace-nowrap ${activeTab === tab
-                  ? 'border-[var(--primary)] text-[var(--primary)]'
-                  : 'border-transparent text-[var(--muted-foreground)] hover:text-white hover:border-[var(--border)]'
+                ? 'border-[var(--primary)] text-[var(--primary)]'
+                : 'border-transparent text-[var(--muted-foreground)] hover:text-white hover:border-[var(--border)]'
                 }`}
             >
               {tab}
