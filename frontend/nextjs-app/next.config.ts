@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
     config.resolve.fallback = { fs: false, path: false, os: false, crypto: false, stream: false };
     return config;
   },
+  // Explicitly set an empty turbopack config to avoid the "missing turbopack config" error 
+  // when custom webpack is used in some Next.js environments.
+  experimental: {
+    turbopack: {}
+  },
   eslint: {
     ignoreDuringBuilds: true
   },
