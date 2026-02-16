@@ -1,30 +1,24 @@
 // circuits/vote_tally.arcis
-// This circuit computes the total votes for a proposal while keeping individual votes private.
-
 circuit VoteTally {
-    // Inputs: Encrypted votes from N users
-    // Each vote is an array of encrypted integers (0 or 1 for Yes/No, or amount for weighted)
-    // Also takes encrypted reputation scores if weighting is applied here.
-    
-    input votes: [[u64]]; // List of votes
-    input weights: [u64]; // Reputation weights (optional, could be passed or looked up)
+    input votes: [[u64]]; // [N_voters][2] (0=Yes, 1=No)
+    input weights: [u64]; // Reputation weights
 
     output yes_votes: u64;
     output no_votes: u64;
 
     def main(votes: [[u64]], weights: [u64]) -> (u64, u64) {
-        // Tally logic here
-        // For each vote, decrypt (share reconstruction in MPC) and sum
-        
         let mut yes_sum = 0;
         let mut no_sum = 0;
 
-        // This implies looping over inputs which is complex in circuits, 
-        // usually fixed size or recursive structure.
-        // Pseudo-code implementation:
-        
-        // yes_sum = sum(votes[i][0] * weights[i])
-        // no_sum = sum(votes[i][1] * weights[i])
+        // In a real circuit, this would be unrolled or use fixed size
+        // Assuming max 100 voters for this demo circuit
+        for i in 0..100 {
+             let w = weights[i];
+             // If vote is yes (index 0 is 1)
+             yes_sum = yes_sum + (votes[i][0] * w);
+             // If vote is no (index 1 is 1)
+             no_sum = no_sum + (votes[i][1] * w);
+        }
 
         return (yes_sum, no_sum);
     }

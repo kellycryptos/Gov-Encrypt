@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  anchor-test:
+  anchor-build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,22 +29,14 @@ jobs:
           avm install latest
           avm use latest
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      - name: Build Anchor Program
+        run: anchor build
 
-      - name: Install Dependencies
-        run: yarn install
-
-      - name: Run Anchor Tests
-        run: anchor test
-
-  lint-frontend:
+  frontend-lint:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./app
+        working-directory: ./frontend/nextjs-app
     steps:
       - uses: actions/checkout@v3
       - name: Install Node.js

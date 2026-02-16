@@ -51,7 +51,7 @@ export default function Vote({ proposalId }: { proposalId: number }) {
             const tx = await program.methods
                 .submitEncryptedVote(encryptedBlob)
                 .accounts({
-                    voteAccount: votePda,
+                    encryptedVoteAccount: votePda,
                     proposal: proposalPda,
                     voter: publicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,

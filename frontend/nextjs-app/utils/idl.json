@@ -71,7 +71,7 @@
             "name": "submitEncryptedVote",
             "accounts": [
                 {
-                    "name": "voteAccount",
+                    "name": "encryptedVoteAccount",
                     "isMut": true,
                     "isSigner": false
                 },
@@ -102,7 +102,7 @@
             "name": "delegatePrivately",
             "accounts": [
                 {
-                    "name": "delegation",
+                    "name": "delegationCommitmentAccount",
                     "isMut": true,
                     "isSigner": false
                 },
@@ -127,7 +127,7 @@
     ],
     "accounts": [
         {
-            "name": "DaoState",
+            "name": "DaoAccount",
             "type": {
                 "kind": "struct",
                 "fields": [
@@ -147,7 +147,7 @@
             }
         },
         {
-            "name": "Proposal",
+            "name": "ProposalAccount",
             "type": {
                 "kind": "struct",
                 "fields": [
@@ -184,6 +184,30 @@
                     {
                         "name": "finalNoVotes",
                         "type": "u64"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "EncryptedVoteAccount",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "voter",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "proposalId",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "encryptedBlob",
+                        "type": "bytes"
+                    },
+                    {
+                        "name": "timestamp",
+                        "type": "i64"
                     }
                 ]
             }

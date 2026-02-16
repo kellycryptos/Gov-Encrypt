@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  solana-validator:
+    image: solanalabs/solana:v1.18.26
+    command: solana-test-validator --reset --ledger /ledger
+    ports:
+      - "8899:8899"
+      - "8900:8900"
+    volumes:
+      - ./ledger:/ledger
+    healthcheck:
+      test: [ "CMD", "solana", "gossip" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  arcium-node:
+    image: arcium/node:latest # Placeholder image name
+    depends_on:
+      - solana-validator
+    environment:
+      - SOLANA_RPC_URL=http://solana-validator:8899
+    ports:
+      - "9000:9000"
+
+  backend-relayer:
+    build:
+      context: ./backend/arcium-relayer
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - solana-validator
+      - arcium-node
+    environment:
+      - RPC_URL=http://solana-validator:8899
+      - PROGRAM_ID=Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS
+    volumes:
+      - ./backend/arcium-relayer:/app
+
+  # Worker node for MPC computation
+  mpc-worker:
+    image: arcium/worker:latest # Placeholder
+    depends_on:
+      - arcium-node

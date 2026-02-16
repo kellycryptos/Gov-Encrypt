@@ -32,7 +32,7 @@ export default function CreateProposal() {
                 PROGRAM_ID
             );
 
-            const daoAccount = await program.account.daoState.fetch(daoStatePda);
+            const daoAccount = await program.account.daoAccount.fetch(daoStatePda);
             const proposalCount = (daoAccount as any).proposalCount;
 
             const [proposalPda] = PublicKey.findProgramAddressSync(

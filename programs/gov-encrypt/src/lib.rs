@@ -43,7 +43,7 @@ pub mod gov_encrypt {
         ctx: Context<SubmitVote>, 
         encrypted_vote_blob: Vec<u8>
     ) -> Result<()> {
-        let vote_account = &mut ctx.accounts.vote_account;
+        let vote_account = &mut ctx.accounts.encrypted_vote_account;
         vote_account.voter = ctx.accounts.voter.key();
         vote_account.proposal_id = ctx.accounts.proposal.id;
         vote_account.encrypted_blob = encrypted_vote_blob;
@@ -57,7 +57,7 @@ pub mod gov_encrypt {
         ctx: Context<DelegateVote>, 
         encrypted_delegation_blob: Vec<u8>
     ) -> Result<()> {
-        let delegation = &mut ctx.accounts.delegation;
+        let delegation = &mut ctx.accounts.delegation_commitment_account;
         delegation.delegator = ctx.accounts.delegator.key();
         delegation.encrypted_blob = encrypted_delegation_blob;
         delegation.timestamp = Clock::get()?.unix_timestamp;
@@ -83,7 +83,7 @@ pub mod gov_encrypt {
         ctx: Context<SubmitSimulation>,
         risk_score: u64,
         is_safe: bool,
-        proof: Vec<u8> // ZK or MPC proof of computation
+        proof: Vec<u8>
     ) -> Result<()> {
         let result = &mut ctx.accounts.simulation_result;
         result.strategy = ctx.accounts.strategy.key();
@@ -107,7 +107,6 @@ pub mod gov_encrypt {
         proposal.final_yes_votes = final_yes_votes;
         proposal.final_no_votes = final_no_votes;
         
-        // Simple quorum check (can be more complex with reputation)
         let total_votes = final_yes_votes + final_no_votes;
         
         if total_votes >= dao_state.quorum_threshold {
@@ -135,7 +134,7 @@ pub struct InitializeDao<'info> {
         seeds = [b"dao_state"],
         bump
     )]
-    pub dao_state: Account<'info, DaoState>,
+    pub dao_state: Account<'info, DaoAccount>,
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -145,7 +144,7 @@ pub struct InitializeDao<'info> {
 #[instruction(cid: String)]
 pub struct CreateProposal<'info> {
     #[account(mut)]
-    pub dao_state: Account<'info, DaoState>,
+    pub dao_state: Account<'info, DaoAccount>,
     #[account(
         init,
         payer = proposer,
@@ -153,7 +152,7 @@ pub struct CreateProposal<'info> {
         seeds = [b"proposal", dao_state.proposal_count.to_le_bytes().as_ref()],
         bump
     )]
-    pub proposal: Account<'info, Proposal>,
+    pub proposal: Account<'info, ProposalAccount>,
     #[account(mut)]
     pub proposer: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -169,9 +168,9 @@ pub struct SubmitVote<'info> {
         seeds = [b"vote", proposal.key().as_ref(), voter.key().as_ref()],
         bump
     )]
-    pub vote_account: Account<'info, EncryptedVote>,
+    pub encrypted_vote_account: Account<'info, EncryptedVoteAccount>,
     #[account(mut)]
-    pub proposal: Account<'info, Proposal>,
+    pub proposal: Account<'info, ProposalAccount>,
     #[account(mut)]
     pub voter: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -187,7 +186,7 @@ pub struct DelegateVote<'info> {
         seeds = [b"delegation", delegator.key().as_ref()],
         bump
     )]
-    pub delegation: Account<'info, EncryptedDelegation>,
+    pub delegation_commitment_account: Account<'info, DelegationCommitmentAccount>,
     #[account(mut)]
     pub delegator: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -203,7 +202,7 @@ pub struct SubmitStrategy<'info> {
         seeds = [b"strategy", proposer.key().as_ref(), Clock::get()?.unix_timestamp.to_le_bytes().as_ref()],
         bump
     )]
-    pub strategy: Account<'info, TreasuryStrategy>,
+    pub strategy: Account<'info, TreasuryStrategyAccount>,
     #[account(mut)]
     pub proposer: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -219,8 +218,8 @@ pub struct SubmitSimulation<'info> {
         seeds = [b"simulation", strategy.key().as_ref()],
         bump
     )]
-    pub simulation_result: Account<'info, SimulationResult>,
-    pub strategy: Account<'info, TreasuryStrategy>,
+    pub simulation_result: Account<'info, SimulationResultAccount>,
+    pub strategy: Account<'info, TreasuryStrategyAccount>,
     #[account(mut)]
     pub mpc_node: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -230,24 +229,24 @@ pub struct SubmitSimulation<'info> {
 #[instruction(final_yes_votes: u64, final_no_votes: u64, proof: Vec<u8>)]
 pub struct FinalizeProposal<'info> {
     #[account(mut)]
-    pub proposal: Account<'info, Proposal>,
-    pub dao_state: Account<'info, DaoState>,
+    pub proposal: Account<'info, ProposalAccount>,
+    pub dao_state: Account<'info, DaoAccount>,
     #[account(mut)]
-    pub mpc_node: Signer<'info>, // Only authorized node can finalize
+    pub mpc_node: Signer<'info>,
 }
 
 #[account]
-pub struct DaoState {
+pub struct DaoAccount {
     pub authority: Pubkey,
     pub proposal_count: u64,
     pub quorum_threshold: u64,
 }
 
 #[account]
-pub struct Proposal {
+pub struct ProposalAccount {
     pub id: u64,
     pub proposer: Pubkey,
-    pub cid: String, // IPFS CID for proposal content
+    pub cid: String,
     pub start_time: i64,
     pub end_time: i64,
     pub status: ProposalStatus,
@@ -256,7 +255,7 @@ pub struct Proposal {
 }
 
 #[account]
-pub struct EncryptedVote {
+pub struct EncryptedVoteAccount {
     pub voter: Pubkey,
     pub proposal_id: u64,
     pub encrypted_blob: Vec<u8>,
@@ -264,28 +263,34 @@ pub struct EncryptedVote {
 }
 
 #[account]
-pub struct EncryptedDelegation {
+pub struct DelegationCommitmentAccount {
     pub delegator: Pubkey,
     pub encrypted_blob: Vec<u8>,
     pub timestamp: i64,
 }
 
 #[account]
-pub struct TreasuryStrategy {
+pub struct TreasuryStrategyAccount {
     pub proposer: Pubkey,
     pub encrypted_params: Vec<u8>,
     pub timestamp: i64,
 }
 
 #[account]
-pub struct SimulationResult {
+pub struct SimulationResultAccount {
     pub strategy: Pubkey,
     pub risk_score: u64,
     pub is_safe: bool,
-    pub proof: Vec<u8>, // Proof that MPC ran honestly
+    pub proof: Vec<u8>,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq)]
+#[account]
+pub struct ReputationCommitmentAccount {
+    pub owner: Pubkey,
+    pub encrypted_commitment: Vec<u8>, 
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, Debug)]
 pub enum ProposalStatus {
     Active,
     Passed,
