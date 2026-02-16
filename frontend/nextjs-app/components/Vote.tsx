@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import idl from "../utils/idl.json";
+import idl from "../../utils/idl.json";
+import { Card } from "../ui/Card";
 
 const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
@@ -73,44 +74,49 @@ export default function Vote({ proposalId }: { proposalId: number }) {
     };
 
     return (
-        <div className="p-6 rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)] shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">Cast Private Vote</h3>
+        <Card title="Cast Private Vote" className="max-w-2xl mx-auto">
             <div className="flex gap-4 mb-6">
                 <button
                     onClick={() => setVoteChoice(1)}
-                    className={`flex-1 py-3 px-4 rounded-lg border transition-all font-medium ${voteChoice === 1
-                            ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
-                            : 'border-[var(--border)] hover:bg-[var(--secondary)]'
+                    className={`flex-1 py-4 px-6 rounded-lg border transition-all font-semibold ${voteChoice === 1
+                            ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                            : 'border-[var(--border)] hover:bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-white'
                         }`}
                 >
-                    Yes
+                    Approve
                 </button>
                 <button
                     onClick={() => setVoteChoice(0)}
-                    className={`flex-1 py-3 px-4 rounded-lg border transition-all font-medium ${voteChoice === 0
-                            ? 'border-red-500 bg-red-500/10 text-red-400'
-                            : 'border-[var(--border)] hover:bg-[var(--secondary)]'
+                    className={`flex-1 py-4 px-6 rounded-lg border transition-all font-semibold ${voteChoice === 0
+                            ? 'border-red-500 bg-red-500/10 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
+                            : 'border-[var(--border)] hover:bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-white'
                         }`}
                 >
-                    No
+                    Reject
                 </button>
             </div>
+
             <button
                 onClick={castVote}
                 disabled={!publicKey || voteChoice === null || loading}
-                className="w-full py-3 px-4 bg-[var(--primary)] text-white rounded-lg hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+                className="w-full py-3 px-4 bg-[var(--primary)] text-white rounded-lg hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-all shadow-md hover:shadow-lg"
             >
-                {loading ? "Processing..." : "Submit Encrypted Vote"}
+                {loading ? "Processing Encryption..." : "Submit Encrypted Vote"}
             </button>
+
             {status && (
-                <div className="mt-4 p-3 rounded bg-[var(--background)] text-sm font-mono border border-[var(--border)]">
+                <div className={`mt-4 p-3 rounded-lg text-sm font-mono border ${status.includes("✅") ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : "bg-[var(--background)] border-[var(--border)] text-[var(--muted-foreground)]"}`}>
                     {status}
                 </div>
             )}
-            <p className="mt-4 text-xs text-[var(--muted-foreground)] text-center flex items-center justify-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Powered by Arcium MPC
-            </p>
-        </div>
+
+            <div className="mt-6 pt-4 border-t border-[var(--border)] flex justify-between items-center text-xs text-[var(--muted-foreground)]">
+                <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Arcium MPC Active
+                </span>
+                <span>End-to-End Encrypted</span>
+            </div>
+        </Card>
     );
 }

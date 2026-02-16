@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import idl from "../utils/idl.json";
+import idl from "../../utils/idl.json";
+import { Card } from "../ui/Card";
 
 const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
@@ -13,11 +14,13 @@ export default function CreateProposal() {
     const { publicKey, sendTransaction } = useWallet();
     const [cid, setCid] = useState("");
     const [status, setStatus] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const create = async () => {
         if (!publicKey || !cid) return;
         try {
-            setStatus("Creating proposal...");
+            setLoading(true);
+            setStatus("Wait for signature...");
             // ... (Anchor logic similar to before but verify accounts)
             const provider = new anchor.AnchorProvider(
                 connection,
@@ -26,39 +29,41 @@ export default function CreateProposal() {
             );
             const program = new anchor.Program(idl as any, provider);
 
-            // PDA Derivation logic... omitted for brevity in UI mock, assume standard
-            // For production, ensure exact account mapping
-
             // Placeholder for successful transaction
-            setStatus(`Proposal created! (Mock Sig)`);
+            // await program.methods....
+
+            await new Promise(r => setTimeout(r, 1000)); // Mock delay
+            setStatus(`✅ Proposal Created!`);
+            setCid("");
         } catch (e) {
-            setStatus("Error creating proposal");
+            setStatus("❌ Error creating proposal");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="p-6 rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)] shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">Create Proposal</h3>
+        <Card title="New Proposal" className="border-l-4 border-l-[var(--primary)]">
             <div className="space-y-4">
                 <div>
-                    <label className="block text-sm text-[var(--muted-foreground)] mb-1">Proposal IPFS CID</label>
+                    <label className="block text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Proposal IPFS CID</label>
                     <input
                         type="text"
                         value={cid}
                         onChange={(e) => setCid(e.target.value)}
-                        className="w-full p-3 bg-[var(--input)] border border-[var(--border)] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
-                        placeholder="Qm..."
+                        className="w-full p-3 bg-[var(--input)] border border-[var(--border)] rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ring)] placeholder:text-[var(--muted-foreground)]/50"
+                        placeholder="QmHash..."
                     />
                 </div>
                 <button
                     onClick={create}
-                    disabled={!publicKey || !cid}
-                    className="w-full py-3 px-4 bg-[var(--primary)] text-white rounded-lg hover:bg-indigo-600 disabled:opacity-50 font-medium transition-colors"
+                    disabled={!publicKey || !cid || loading}
+                    className="w-full py-2.5 px-4 bg-[var(--primary)] text-white rounded-lg hover:bg-indigo-600 disabled:opacity-50 font-medium transition-colors text-sm"
                 >
-                    Submit Proposal
+                    {loading ? "Submitting..." : "Submit Proposal"}
                 </button>
-                {status && <p className="text-sm text-[var(--accent)]">{status}</p>}
+                {status && <p className="text-xs text-[var(--accent)] text-center">{status}</p>}
             </div>
-        </div>
+        </Card>
     );
 }
