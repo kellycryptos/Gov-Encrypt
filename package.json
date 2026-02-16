@@ -2,14 +2,18 @@
   "name": "gov-encrypt-monorepo",
   "private": true,
   "workspaces": [
-    "app",
+    "frontend/nextjs-app",
     "programs/*",
-    "integration"
+    "backend/arcium-relayer"
   ],
   "scripts": {
-    "build": "yarn workspaces run build",
-    "test": "yarn workspaces run test",
-    "lint": "yarn workspaces run lint",
-    "validator": "docker-compose -f docker/docker-compose.yml up -d"
+    "build": "npm run build -w frontend/nextjs-app",
+    "test": "npm test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "validator": "docker compose up -d"
+  },
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom"
   }
 }
