@@ -11,7 +11,23 @@ pub mod gov_encrypt {
         dao_state.authority = ctx.accounts.authority.key();
         dao_state.proposal_count = 0;
         dao_state.quorum_threshold = quorum_threshold;
+        dao_state.authorized_mpc_node = ctx.accounts.authority.key(); // Initial node is authority
         msg!("DAO Initialized with quorum threshold: {}", quorum_threshold);
+        Ok(())
+    }
+
+    pub fn set_authorized_node(ctx: Context<UpdateDao>, new_node: Pubkey) -> Result<()> {
+        let dao_state = &mut ctx.accounts.dao_state;
+        dao_state.authorized_mpc_node = new_node;
+        msg!("Authorized MPC node updated: {}", new_node);
+        Ok(())
+    }
+
+    pub fn initialize_reputation(ctx: Context<InitializeReputation>, commitment: Vec<u8>) -> Result<()> {
+        let rep = &mut ctx.accounts.reputation;
+        rep.owner = ctx.accounts.owner.key();
+        rep.encrypted_commitment = commitment;
+        msg!("Reputation commitment initialized for: {}", rep.owner);
         Ok(())
     }
 
@@ -85,6 +101,11 @@ pub mod gov_encrypt {
         is_safe: bool,
         proof: Vec<u8>
     ) -> Result<()> {
+        require!(
+            ctx.accounts.mpc_node.key() == ctx.accounts.dao_state.authorized_mpc_node,
+            GovError::UnauthorizedNode
+        );
+
         let result = &mut ctx.accounts.simulation_result;
         result.strategy = ctx.accounts.strategy.key();
         result.risk_score = risk_score;
@@ -101,6 +122,11 @@ pub mod gov_encrypt {
         final_no_votes: u64,
         proof: Vec<u8>
     ) -> Result<()> {
+        require!(
+            ctx.accounts.mpc_node.key() == ctx.accounts.dao_state.authorized_mpc_node,
+            GovError::UnauthorizedNode
+        );
+
         let proposal = &mut ctx.accounts.proposal;
         let dao_state = &ctx.accounts.dao_state;
 
@@ -130,13 +156,35 @@ pub struct InitializeDao<'info> {
     #[account(
         init,
         payer = authority,
-        space = 8 + 32 + 8 + 8,
+        space = 8 + 32 + 8 + 8 + 32,
         seeds = [b"dao_state"],
         bump
     )]
     pub dao_state: Account<'info, DaoAccount>,
     #[account(mut)]
     pub authority: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct UpdateDao<'info> {
+    #[account(mut, seeds = [b"dao_state"], bump, has_one = authority)]
+    pub dao_state: Account<'info, DaoAccount>,
+    pub authority: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct InitializeReputation<'info> {
+    #[account(
+        init,
+        payer = owner,
+        space = 8 + 32 + 64, // Vec<u8> approx
+        seeds = [b"reputation", owner.key().as_ref()],
+        bump
+    )]
+    pub reputation: Account<'info, ReputationCommitmentAccount>,
+    #[account(mut)]
+    pub owner: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 
@@ -219,6 +267,7 @@ pub struct SubmitSimulation<'info> {
         bump
     )]
     pub simulation_result: Account<'info, SimulationResultAccount>,
+    pub dao_state: Account<'info, DaoAccount>,
     pub strategy: Account<'info, TreasuryStrategyAccount>,
     #[account(mut)]
     pub mpc_node: Signer<'info>,
@@ -235,11 +284,13 @@ pub struct FinalizeProposal<'info> {
     pub mpc_node: Signer<'info>,
 }
 
+
 #[account]
 pub struct DaoAccount {
     pub authority: Pubkey,
     pub proposal_count: u64,
     pub quorum_threshold: u64,
+    pub authorized_mpc_node: Pubkey,
 }
 
 #[account]
@@ -296,3 +347,14 @@ pub enum ProposalStatus {
     Passed,
     Failed,
 }
+
+#[error_code]
+pub enum GovError {
+    #[msg("The provided MPC node is not authorized to submit results.")]
+    UnauthorizedNode,
+    #[msg("Voting period has not ended.")]
+    VotingNotEnded,
+    #[msg("Insufficient reputation for this action.")]
+    InsufficientReputation,
+}
+

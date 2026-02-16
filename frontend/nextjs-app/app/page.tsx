@@ -38,33 +38,29 @@ export default function Home() {
 
       <div className="max-w-7xl mx-auto px-6 mt-10">
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <Card className="relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" /></svg>
-            </div>
-            <div className="text-[var(--muted-foreground)] text-xs font-medium uppercase tracking-wider mb-1">Treasury Value</div>
-            <div className="text-3xl font-bold text-white">$42,500,000</div>
-            <div className="text-emerald-400 text-xs mt-2 flex items-center gap-1">
-              <span>↑ 2.4%</span>
-              <span className="text-[var(--muted-foreground)]">vs last epoch</span>
+        {/* Key Metrics Row */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+          <Card className="bg-slate-900/40 border-slate-800">
+            <div className="text-[var(--muted-foreground)] text-[10px] font-bold uppercase tracking-widest mb-1">Active Proposals</div>
+            <div className="text-2xl font-bold text-white">03</div>
+            <div className="h-1 w-full bg-slate-800 mt-3 rounded-full overflow-hidden">
+              <div className="h-full bg-indigo-500 w-1/3"></div>
             </div>
           </Card>
-          <Card>
-            <div className="text-[var(--muted-foreground)] text-xs font-medium uppercase tracking-wider mb-1">Active Proposals</div>
-            <div className="text-3xl font-bold text-white">3</div>
-            <div className="text-[var(--muted-foreground)] text-xs mt-2">
-              Next tally in 14h 32m
-            </div>
+          <Card className="bg-slate-900/40 border-slate-800">
+            <div className="text-[var(--muted-foreground)] text-[10px] font-bold uppercase tracking-widest mb-1">Avg. Risk Score</div>
+            <div className="text-2xl font-bold text-emerald-400">12.5%</div>
+            <div className="text-[10px] text-emerald-500/60 mt-2 font-mono">MPC VERIFIED</div>
           </Card>
-          <Card>
-            <div className="text-[var(--muted-foreground)] text-xs font-medium uppercase tracking-wider mb-1">Encrypted Votes</div>
-            <div className="text-3xl font-bold text-indigo-400">1,248</div>
-            <div className="text-[var(--muted-foreground)] text-xs mt-2 flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              MPC Network Active
-            </div>
+          <Card className="bg-slate-900/40 border-slate-800">
+            <div className="text-[var(--muted-foreground)] text-[10px] font-bold uppercase tracking-widest mb-1">Quorum Status</div>
+            <div className="text-2xl font-bold text-white">84%</div>
+            <div className="text-[10px] text-slate-500 mt-1">Institutional Weighted</div>
+          </Card>
+          <Card className="bg-slate-900/40 border-slate-800">
+            <div className="text-[var(--muted-foreground)] text-[10px] font-bold uppercase tracking-widest mb-1">Encrypted Votes</div>
+            <div className="text-2xl font-bold text-indigo-400">8.2k</div>
+            <div className="text-[10px] text-indigo-500/60 mt-1 animate-pulse">SYNCING...</div>
           </Card>
         </div>
 
@@ -88,30 +84,65 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
           {/* Primary Column */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {activeTab === 'governance' && (
               <>
-                <Card className="border-l-4 border-l-emerald-500">
+                {/* Featured Proposal */}
+                <Card className="border-l-4 border-l-indigo-600 bg-indigo-500/5">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded border border-emerald-500/20">Active</span>
+                        <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded border border-emerald-500/20">Voting Active</span>
                         <span className="text-xs text-[var(--muted-foreground)]">ID: #42</span>
                       </div>
-                      <h2 className="text-xl font-bold text-white mb-2">Treasury Diversification Strategy Alpha</h2>
-                    </div>
-                    <div className="text-right hidden sm:block">
-                      <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)] mb-1">Time Remaining</div>
-                      <div className="font-mono text-sm">14h 32m 15s</div>
+                      <h2 className="text-xl font-bold text-white mb-2">Strategy: Diversification Alpha-V</h2>
                     </div>
                   </div>
-                  <p className="text-[var(--muted-foreground)] text-sm mb-6 leading-relaxed border-b border-[var(--border)] pb-6">
-                    Proposing to allocate 15% of the USDC treasury into low-risk yield generating protocols.
-                    The strategy parameters have been risk-assessed via private MPC simulation.
-                    Vote outcomes are encrypted until the tally phase.
+                  <p className="text-[var(--muted-foreground)] text-sm mb-6 leading-relaxed border-b border-slate-800 pb-6">
+                    Allocate 15% of the USDC treasury to diversified yield protocols. Strategy verified via MPC stress-test.
+                    Results will be aggregated and revealed upon finalization.
                   </p>
                   <Vote proposalId={42} />
                 </Card>
+
+                {/* Recent Proposal Table */}
+                <div className="rounded-xl border border-slate-800 overflow-hidden bg-slate-900/20 backdrop-blur-sm">
+                  <div className="px-6 py-4 border-b border-slate-800 bg-slate-800/20">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">Protocol Ledger</h3>
+                  </div>
+                  <table className="w-full text-left text-sm">
+                    <thead className="text-[10px] text-slate-500 uppercase tracking-widest bg-slate-800/10">
+                      <tr>
+                        <th className="px-6 py-3 font-semibold">Proposal</th>
+                        <th className="px-6 py-3 font-semibold text-center">Aggregation</th>
+                        <th className="px-6 py-3 font-semibold text-right">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/50">
+                      {[
+                        { id: '#41', title: 'DAO Fee Restructuring', res: '64% / 36%', status: 'FAILED' },
+                        { id: '#40', title: 'Security Partner Retention', res: '92% / 8%', status: 'PASSED' },
+                        { id: '#39', title: 'Arcium Liquidity Bootstrapping', res: '88% / 12%', status: 'PASSED' },
+                      ].map((p) => (
+                        <tr key={p.id} className="hover:bg-slate-800/10 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="font-medium text-white">{p.title}</div>
+                            <div className="text-[10px] text-slate-500 font-mono">{p.id}</div>
+                          </td>
+                          <td className="px-6 py-4 text-center font-mono text-xs text-indigo-400">
+                            {p.res}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${p.status === 'PASSED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'
+                              }`}>
+                              {p.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </>
             )}
 
@@ -119,6 +150,7 @@ export default function Home() {
 
             {activeTab === 'treasury' && <TreasurySimulation />}
           </div>
+
 
           {/* Sidebar Column */}
           <div className="space-y-6">
