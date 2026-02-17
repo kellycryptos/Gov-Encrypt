@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { mockApi, Proposal, QuorumStatus } from "@/lib/mockApi";
 import { useProgram } from "@/hooks/useProgram";
 import { Button, Card, CardHeader, CardTitle, CardContent } from "./ui";
+import { ProposalCard } from "./ProposalCard";
 import { Check, X, Clock, Loader2, AlertCircle } from "lucide-react";
 
 export function Dashboard() {
@@ -82,64 +83,45 @@ export function Dashboard() {
                     active Proposals <span className="text-xs bg-indigo-500/10 text-indigo-400 px-2 py-1 rounded-full">{proposals.length}</span>
                 </h2>
 
-                {proposals.map((prop) => (
-                    <div key={prop.id} className="glass-card p-6 border-l-4 border-l-indigo-500">
-                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                            <div className="space-y-3 flex-1">
-                                <div className="flex items-center gap-3">
-                                    <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wider 
-                    ${prop.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' :
-                                            prop.status === 'rejected' ? 'bg-red-500/10 text-red-400' : 'bg-slate-700 text-slate-300'}`}>
-                                        {prop.status}
-                                    </span>
-                                    <span className="text-slate-500 text-xs flex items-center gap-1">
-                                        <Clock className="w-3 h-3" /> Ends {new Date(prop.endDate).toLocaleDateString()}
-                                    </span>
-                                </div>
+                {proposals.map((prop) => {
+                    const totalVotes = prop.votesFor + prop.votesAgainst;
+                    const yesPercentage = totalVotes > 0 ? (prop.votesFor / totalVotes) * 100 : 0;
+                    const noPercentage = totalVotes > 0 ? (prop.votesAgainst / totalVotes) * 100 : 0;
 
-                                <h3 className="text-xl font-bold text-white">{prop.title}</h3>
-                                <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">{prop.description}</p>
-
-                                <div className="flex gap-2">
-                                    {prop.tags.map(tag => (
-                                        <span key={tag} className="text-xs bg-white/5 text-slate-400 px-2 py-1 rounded">#{tag}</span>
-                                    ))}
-                                </div>
+                    return (
+                        <ProposalCard
+                            key={prop.id}
+                            id={prop.id}
+                            title={prop.title}
+                            description={prop.description}
+                            status={prop.status}
+                            yesPercentage={yesPercentage}
+                            noPercentage={noPercentage}
+                            deadline={new Date(prop.endDate).toLocaleDateString()}
+                        >
+                            <div className="grid grid-cols-2 gap-2">
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
+                                    onClick={() => handleVote(prop.id, 'for')}
+                                    disabled={!!voting}
+                                >
+                                    Vote For
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="border-red-500/20 text-red-400 hover:bg-red-500/10"
+                                    onClick={() => handleVote(prop.id, 'against')}
+                                    disabled={!!voting}
+                                >
+                                    Against
+                                </Button>
                             </div>
-
-                            <div className="space-y-3 min-w-[200px]">
-                                <div className="flex justify-between text-xs mb-1">
-                                    <span className="text-slate-400">For</span>
-                                    <span className="text-white font-mono">{prop.votesFor.toLocaleString()}</span>
-                                </div>
-                                <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-indigo-500" style={{ width: `${(prop.votesFor / (prop.votesFor + prop.votesAgainst)) * 100}%` }} />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-2 pt-2">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
-                                        onClick={() => handleVote(prop.id, 'for')}
-                                        disabled={!!voting}
-                                    >
-                                        Vote For
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="border-red-500/20 text-red-400 hover:bg-red-500/10"
-                                        onClick={() => handleVote(prop.id, 'against')}
-                                        disabled={!!voting}
-                                    >
-                                        Against
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                        </ProposalCard>
+                    );
+                })}
             </div>
         </div>
     );
