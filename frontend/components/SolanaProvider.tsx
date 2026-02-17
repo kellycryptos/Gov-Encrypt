@@ -12,16 +12,8 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 
 export function SolanaProvider({ children }: { children: React.ReactNode }) {
     // Fix for "Cannot redefine property: ethereum"
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            if (!Object.getOwnPropertyDescriptor(window, "ethereum")) {
-                Object.defineProperty(window, "ethereum", {
-                    value: (window as any).ethereum,
-                    writable: false,
-                });
-            }
-        }
-    }, []);
+    // Fix for "Cannot redefine property: ethereum" - Removed faulty polyfill
+
 
     // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
     const network = WalletAdapterNetwork.Devnet;

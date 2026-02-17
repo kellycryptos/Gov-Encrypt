@@ -23,13 +23,13 @@ export interface Delegate {
     name: string;
 }
 
-const API_Base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
+const API_Base = '/api';
 
 export const mockApi = {
     getProposals: async (): Promise<Proposal[]> => {
         // Updated to use local API route as requested
-        const res = await fetch("/api/proposals");
+        const res = await fetch(`${API_Base}/proposals`);
 
         if (!res.ok) {
             console.error("API error:", res.status);
