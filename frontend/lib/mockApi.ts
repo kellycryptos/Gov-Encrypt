@@ -28,8 +28,13 @@ const API_Base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 export const mockApi = {
     getProposals: async (): Promise<Proposal[]> => {
-        const res = await fetch(`${API_Base}/proposals`);
-        if (!res.ok) throw new Error('Failed to fetch proposals');
+        // Updated to use local API route as requested
+        const res = await fetch("/api/proposals");
+
+        if (!res.ok) {
+            console.error("API error:", res.status);
+            return [];
+        }
         return res.json();
     },
 
