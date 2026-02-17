@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { mockApi, Proposal, QuorumStatus } from "@/lib/mockApi";
+import { useProgram } from "@/hooks/useProgram";
 import { Button, Card, CardHeader, CardTitle, CardContent } from "./ui";
 import { Check, X, Clock, Loader2, AlertCircle } from "lucide-react";
 
@@ -10,32 +11,41 @@ export function Dashboard() {
     const [quorum, setQuorum] = useState<QuorumStatus | null>(null);
     const [loading, setLoading] = useState(true);
     const [voting, setVoting] = useState<string | null>(null);
+    const { getProposals, isConnected, submitVote } = useProgram();
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                const [props, quor] = await Promise.all([
-                    mockApi.getProposals(),
-                    mockApi.getQuorumStatus()
-                ]);
-                setProposals(props);
+                // Direct call to getProposals will now use relayer
+                const props = await getProposals();
+                const quor = await mockApi.getQuorumStatus();
+
+                setProposals(props.length > 0 ? props : await mockApi.getProposals());
                 setQuorum(quor);
             } catch (err) {
-                console.error("Failed to load mock data", err);
+                console.error("Failed to load data", err);
             } finally {
                 setLoading(false);
             }
         };
         loadData();
-    }, []);
+    }, [isConnected]); // Re-run when wallet connection changes
 
     const handleVote = async (id: string, side: 'for' | 'against') => {
         setVoting(id);
-        await mockApi.submitVote(id, side);
-        setVoting(null);
-        // Optimistic update could go here
-        alert(`Voted ${side} on proposal ${id}`);
+        try {
+            await submitVote(id, side);
+            alert(`Vote ${side} for proposal ${id} relayed to Arcium MPC`);
+            // Refresh data
+            const updated = await getProposals();
+            setProposals(updated);
+        } catch (e) {
+            alert("Failed to submit vote to MPC relayer");
+        } finally {
+            setVoting(null);
+        }
     };
+
 
     if (loading) {
         return (

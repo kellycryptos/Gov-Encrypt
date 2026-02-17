@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-// import { SolanaProvider } from "../components/SolanaProvider"; // Temporarily disabled for Phase 1/2
+import { SolanaProvider } from "../components/SolanaProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,9 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-        {/* <SolanaProvider> */}
-        {children}
-        {/* </SolanaProvider> */}
+        <SolanaProvider>
+          {children}
+        </SolanaProvider>
       </body>
     </html>
   );

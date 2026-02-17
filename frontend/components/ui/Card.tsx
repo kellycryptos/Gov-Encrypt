@@ -30,3 +30,16 @@ export const Card: React.FC<CardProps> = ({ children, header, footer, className 
         </div>
     );
 };
+
+export const CardHeader: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
+    <div className={`px-6 py-4 border-b border-[var(--border)] ${className}`}>{children}</div>
+);
+
+export const CardTitle: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
+    <h3 className={`text-lg font-bold ${className}`}>{children}</h3>
+);
+
+export const CardContent: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
+    <div className={`p-6 ${className}`}>{children}</div>
+);
+

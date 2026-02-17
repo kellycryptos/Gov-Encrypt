@@ -1,5 +1,6 @@
 export * from "./Button";
-export * from "./Card";
+export { Card, CardHeader, CardTitle, CardContent } from "./Card";
+
 
 export const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({ className = '', ...props }) => {
     return (

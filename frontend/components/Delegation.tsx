@@ -1,107 +1,81 @@
 "use client";
 
-import { useState } from "react";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import * as anchor from "@coral-xyz/anchor";
-import { PublicKey } from "@solana/web3.js";
-import idl from "../src/idl/gov_encrypt.json";
-import { Card } from "./ui/Card";
-import { Button, Input } from "./ui";
+import { useEffect, useState } from "react";
+import { mockApi, Delegate } from "@/lib/mockApi";
+import { useProgram } from "@/hooks/useProgram";
 
-const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+import { Button } from "./ui";
+import { Loader2, Shield, User } from "lucide-react";
 
 export function Delegation() {
-    const { connection } = useConnection();
-    const { publicKey, sendTransaction } = useWallet();
-    const [delegateAddress, setDelegateAddress] = useState("");
-    const [status, setStatus] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [delegates, setDelegates] = useState<Delegate[]>([]);
+    const [loading, setLoading] = useState(true);
+    const { getDelegations, isConnected } = useProgram();
 
-    const delegate = async () => {
-        if (!publicKey || !delegateAddress) return;
-        try {
-            setLoading(true);
-            setStatus("🔒 Encrypting delegation link...");
+    useEffect(() => {
+        const loadDelegates = async () => {
+            try {
+                let data: Delegate[] = [];
+                if (isConnected) {
+                    data = await getDelegations();
+                }
 
-            await new Promise(r => setTimeout(r, 1200));
+                if (data.length === 0) {
+                    data = await mockApi.getDelegations();
+                }
+                setDelegates(data);
+            } catch (err) {
+                console.error("Failed to load delegates", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadDelegates();
+    }, [isConnected]); // Re-run when wallet connection changes
 
-            const provider = new anchor.AnchorProvider(
-                connection,
-                { publicKey, signTransaction: async (tx: any) => tx, signAllTransactions: async (txs: any) => txs },
-                { commitment: "processed" }
-            );
-            const program = new anchor.Program(idl as any, provider);
 
-            const [delegationPda] = PublicKey.findProgramAddressSync(
-                [Buffer.from("delegation"), publicKey.toBuffer()],
-                PROGRAM_ID
-            );
-
-            const encryptedDelegation = Buffer.from(delegateAddress.slice(0, 32));
-
-            const tx = await program.methods
-                .delegateVote(new PublicKey(delegateAddress), new anchor.BN(100)) // Static weight for demo
-                .accounts({
-                    delegation: delegationPda,
-                    delegator: publicKey,
-                    systemProgram: anchor.web3.SystemProgram.programId,
-                })
-                .transaction();
-
-            const sig = await sendTransaction(tx, connection);
-            setStatus(`✅ Delegation securely recorded! Sig: ${sig.slice(0, 8)}...`);
-        } catch (e) {
-            console.error(e);
-            setStatus("❌ Error processing delegation");
-        } finally {
-            setLoading(false);
-        }
-    };
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center p-12">
+                <Loader2 className="w-6 h-6 text-indigo-500 animate-spin" />
+            </div>
+        );
+    }
 
     return (
-        <Card className="max-w-2xl mx-auto">
-            <h2 className="text-xl font-bold mb-2">Private Delegation</h2>
-            <p className="text-sm text-[var(--muted-foreground)] mb-8 leading-relaxed">
-                Delegate your voting power without revealing your identity or social graph.
-                The link between you and your delegate is encrypted using Arcium MPC.
-            </p>
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-indigo-500" />
+                    Active Delegates
+                </h2>
+                <span className="text-xs text-slate-400 bg-slate-800/50 px-2 py-1 rounded">Top 3 by Voting Power</span>
+            </div>
 
-            <div className="space-y-6">
-                <div>
-                    <label className="block text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider mb-2">
-                        Delegate Address (Public Key)
-                    </label>
-                    <Input
-                        type="text"
-                        placeholder="Enter Solana Address..."
-                        value={delegateAddress}
-                        onChange={(e) => setDelegateAddress(e.target.value)}
-                        className="font-mono"
-                    />
-                </div>
+            <div className="grid gap-4">
+                {delegates.map((delegate, i) => (
+                    <div key={delegate.address} className="glass-card p-4 flex items-center justify-between group hover:border-indigo-500/30 transition-colors">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center font-bold text-white">
+                                {delegate.name.charAt(0)}
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-white group-hover:text-indigo-400 transition-colors">{delegate.name}</h3>
+                                <p className="text-xs text-slate-500 font-mono">{delegate.address}</p>
+                            </div>
+                        </div>
 
-                <Button
-                    onClick={delegate}
-                    disabled={!publicKey || !delegateAddress || loading}
-                    className="w-full h-12 !font-bold"
-                >
-                    {loading ? "Encrypting & Signing..." : "Encrypt & Delegate Power"}
-                </Button>
+                        <div className="text-right mr-4">
+                            <p className="text-sm font-bold text-white">{delegate.votingPower.toLocaleString()} VP</p>
+                            <p className="text-xs text-slate-500">{delegate.proposalsVoted} proposals voted</p>
+                        </div>
 
-                {status && (
-                    <div className={`mt-2 text-xs font-mono p-3 rounded-lg border ${status.includes("✅") ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-red-50 border-red-100 text-red-600"}`}>
-                        {status}
+                        <Button size="sm" variant="neon" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            Delegate
+                        </Button>
                     </div>
-                )}
+                ))}
             </div>
-
-            <div className="mt-10 p-5 rounded-xl bg-slate-50 border border-[var(--border)]">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Your Delegation Status</h4>
-                <div className="flex justify-between items-center text-sm">
-                    <span className="font-medium">Current Delegate</span>
-                    <span className="font-mono text-[var(--primary)] bg-indigo-50 px-2 py-1 rounded">None</span>
-                </div>
-            </div>
-        </Card>
+        </div>
     );
 }

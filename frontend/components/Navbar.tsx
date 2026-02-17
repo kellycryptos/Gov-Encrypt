@@ -1,5 +1,7 @@
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { Shield, Menu } from "lucide-react";
 import { Button } from "./ui";
-import { Copy, Shield, Menu } from "lucide-react";
+
 
 export function Navbar() {
     return (
@@ -27,10 +29,7 @@ export function Navbar() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-3">
-                    <Button variant="neon" size="sm" className="hidden sm:inline-flex gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        Connect Wallet
-                    </Button>
+                    <WalletMultiButton className="!bg-[#6366f1] hover:!bg-[#4f46e5] !h-9 !px-4 !rounded-lg !font-medium !text-sm" />
                     <Button variant="ghost" size="icon" className="md:hidden">
                         <Menu className="w-5 h-5" />
                     </Button>
