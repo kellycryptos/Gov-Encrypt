@@ -1,30 +1,44 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { mockApi, Proposal, QuorumStatus } from "@/lib/mockApi";
-import { useProgram } from "@/hooks/useProgram";
-import { Button, Card, CardHeader, CardTitle, CardContent } from "./ui";
 import { ProposalCard } from "./ProposalCard";
-import { Check, X, Clock, Loader2, AlertCircle } from "lucide-react";
+import { Proposal } from "../lib/mockApi"; // Keep type for now
+import { useWallet } from "@solana/wallet-adapter-react";
+import { fetchProposals } from "../lib/program";
+import { mockApi } from "../lib/mockApi";
+import { Loader2 } from "lucide-react";
+// Removed unused imports like Button/Card/etc since they were only used in the removed logic or should be in ProposalCard
 
 export function Dashboard() {
+    const wallet = useWallet();
     const [proposals, setProposals] = useState<Proposal[]>([]);
-    const [quorum, setQuorum] = useState<QuorumStatus | null>(null);
     const [loading, setLoading] = useState(true);
-    const [voting, setVoting] = useState<string | null>(null);
-    const { getProposals, isConnected, submitVote } = useProgram();
+    const [useRealData, setUseRealData] = useState(false);
 
     useEffect(() => {
-        const loadData = async () => {
+        const load = async () => {
+            setLoading(true);
             try {
-                // Direct call to getProposals will now use relayer
-                const props = await getProposals();
-                const quor = await mockApi.getQuorumStatus();
-
-                setProposals(props.length > 0 ? props : await mockApi.getProposals());
-                setQuorum(quor);
+                // Try fetching from real chain if wallet is connected
+                if (wallet.connected) {
+                    const realData = await fetchProposals(wallet);
+                    if (realData.length > 0) {
+                        setProposals(realData as any); // Cast for prototype
+                        setUseRealData(true);
+                    } else {
+                        // Fallback to mock if no data on chain yet
+                        const data = await mockApi.getProposals();
+                        setProposals(data);
+                    }
+                } else {
+                    // Default to mock for non-connected users
+                    const data = await mockApi.getProposals();
+                    setProposals(data);
+                }
             } catch (err) {
-                console.error("Failed to load data", err);
+                console.error("Failed to load proposals", err);
+                const data = await mockApi.getProposals();
+                setProposals(data);
             } finally {
                 setLoading(false);
             }
