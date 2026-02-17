@@ -10,6 +10,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
+
       <main className="flex-grow">
         <Hero />
 
@@ -44,14 +45,6 @@ export default function Home() {
           <Dashboard />
         </section>
       </main>
-
-      <footer className="py-12 border-t border-white/5 bg-[#020617]">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-slate-500 text-sm">
-            &copy; 2024 Gov Encrypt. Built with <span className="text-indigo-500">Next.js 15</span> & <span className="text-violet-500">Arcium</span>.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

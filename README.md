@@ -53,6 +53,11 @@ Gov-Encrypt is the Confidential Governance Layer enabling:
 ## Live Demo
 [https://gov-encrypt.vercel.app/](https://gov-encrypt.vercel.app/)
 
+## Socials
+[![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/kellycryptos?style=social)](https://x.com/kellycryptos)
+
+Follow **[@kellycryptos](https://x.com/kellycryptos)** for updates.
+
 ## Future Expansion
 - **Multi-chain DAO support**: Bringing confidential governance to Ethereum and Cosmos.
 - **Private OTC Deals**: Native support for confidential token swaps between DAOs.
