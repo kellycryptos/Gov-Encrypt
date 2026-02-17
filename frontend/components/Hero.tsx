@@ -18,22 +18,25 @@ export function Hero() {
                     <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1]">
                         Privacy for <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
-                            Serious DAOs
+                            DAOs.
                         </span>
                     </h1>
 
                     <p className="text-lg text-slate-400 max-w-lg leading-relaxed">
-                        The first confidential governance layer powered by Arcium.
-                        Vote without efficient front-running. Manage treasuries without exposing strategies.
+                        Gov-Encrypt is the Confidential Governance Layer enabling private voting, encrypted delegation, and confidential treasury simulation for decentralized organizations.
                     </p>
 
                     <div className="flex flex-wrap items-center gap-4">
-                        <Button size="lg" className="h-14 px-8 text-base bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_30px_rgba(99,102,241,0.4)] border-0">
-                            Launch App <ArrowRight className="ml-2 w-5 h-5" />
-                        </Button>
-                        <Button variant="outline" size="lg" className="h-14 px-8 text-base border-white/10 text-white hover:bg-white/5">
-                            Read Documentation
-                        </Button>
+                        <a href="/governance">
+                            <Button size="lg" className="h-14 px-8 text-base bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_30px_rgba(99,102,241,0.4)] border-0">
+                                Launch App <ArrowRight className="ml-2 w-5 h-5" />
+                            </Button>
+                        </a>
+                        <a href="/docs">
+                            <Button variant="outline" size="lg" className="h-14 px-8 text-base border-white/10 text-white hover:bg-white/5">
+                                View Docs
+                            </Button>
+                        </a>
                     </div>
 
                     <div className="flex items-center gap-8 pt-4">

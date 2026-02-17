@@ -1,111 +1,58 @@
-# 🗂 1. Project Folder Structure
+# Gov-Encrypt
 
-my-confidential-dao/
-│
-├── program/                  # Anchor smart contract
-│   ├── Cargo.toml
-│   ├── Anchor.toml
-│   ├── src/
-│   │   └── lib.rs            # DAO program: proposals, delegation, voting
-│   └── migrations/
-│       └── deploy.rs
-│
-├── mxe-node/                 # Arcium confidential compute
-│   ├── Dockerfile
-│   ├── config/
-│   │   └── node-config.json
-│   └── scripts/
-│       └── start-mxe.sh
-│
-├── frontend/                 # Next.js UI
-│   ├── package.json
-│   ├── next.config.js
-│   ├── tailwind.config.js    # Optimized for styling
-│   ├── app/                  # (Using App Router)
-│   ├── components/
-│   │   ├── ProposalCard.tsx
-│   │   ├── Vote.tsx          # (Integrated VoteButton)
-│   │   └── Delegation.tsx    # (Integrated DelegationWidget)
-│   └── utils/
-│       ├── solana.ts         # RPC & program ID
-│       └── arcium.ts         # MXE interaction
-│
-└── README.md
+**The Confidential Governance Infrastructure for DAOs**
 
-⸻
+## Vision
+Governance without transparency tradeoffs. We believe that for DAOs to mature into global institutions, they require the ability to make strategic decisions without immediate public exposure.
 
-# 🏗 2. Key Details per Layer
+## Problem
+Current DAO governance models default to radical transparency, which exposes:
+- **Voting choices**, leading to bribery, coercion, and voter apathy.
+- **Delegation graphs**, creating social pressure and centralization risks.
+- **Strategic treasury decisions**, allowing market participants to front-run DAO trades.
 
-### /program — Anchor DAO
- • Handles: proposal creation, vote recording, delegation logic
- • Build: locally via Anchor
- • Deploy: `anchor build && anchor deploy --provider.cluster devnet`
- • Program ID: export to .env and use in frontend
+This reduces participation and creates massive coordination risks for serious organizations.
 
-### /mxe-node — Arcium MXE
- • Handles: confidential vote/delegation processing
- • Dockerized: ensures it runs anywhere
- • Workflow: frontend sends encrypted vote → MXE tallies → final result written to Devnet program
- • Start Command:
-```bash
-cd mxe-node
-docker build -t arcium-mxe .
-docker run -d --name arcium-mxe -p 8080:8080 arcium-mxe
-```
+## Solution
+Gov-Encrypt is the Confidential Governance Layer enabling:
+- **Private Voting**: Encrypted ballots that are only revealed (if desired) after the voting period ends.
+- **Encrypted Delegation**: Delegate voting power without revealing the social graph.
+- **Confidential Treasury Forecasting**: Simulate financial strategies on private data before execution.
+- **Reputation-Weighted Quorum**: Calculate protocol health without leaking live vote tallies.
 
-### /frontend — Next.js DAO UI
- • Connects to:
- • Devnet RPC (`NEXT_PUBLIC_RPC=https://api.devnet.solana.com`)
- • Deployed program ID (`NEXT_PUBLIC_PROGRAM_ID`)
- • Arcium MXE endpoint (`NEXT_PUBLIC_ARCIUM_ENDPOINT`)
- • Functionality:
- • Proposal creation
- • Vote submission (encrypted)
- • Delegation
- • Display final tally from Arcium
- • Deploy: only frontend → Vercel
- • No Rust, no Docker, no MXE build inside Vercel
+## Architecture
+1.  **Next.js Frontend**: User interface for encrypted interactions.
+2.  **Relayer**: Batches and routes encrypted payloads.
+3.  **Confidential Compute Layer (Arcium)**: Secure Multiparty Execution (MXE) environments for processing votes and tallying results.
+4.  **Solana Governance Program**: On-chain anchor for final state settlement.
 
-⸻
+## Why It Matters
+- **Improves voter participation** by removing social friction.
+- **Prevents coercion** and vote-buying markets.
+- **Protects treasury strategy** from predatory market actors.
+- **Enables enterprise DAO adoption** where privacy is a compliance requirement.
 
-# ⚡ 3. Deployment & Testing Flow
- 1. **Anchor Program**
-```bash
-cd program
-solana config set --url https://api.devnet.solana.com
-solana airdrop 2
-anchor build
-anchor deploy
-```
+## Roadmap
 
- 2. **Arcium MXE**
-```bash
-cd mxe-node
-sh scripts/start-mxe.sh
-```
+### Phase 1: MVP (Current)
+- UI/UX for Governance and Treasury.
+- Mock integration of privacy flows.
+- Local simulation of encrypted state.
 
- 3. **Frontend**
-```bash
-cd frontend
-npm install
-# Set NEXT_PUBLIC_RPC, NEXT_PUBLIC_PROGRAM_ID, NEXT_PUBLIC_ARCIUM_ENDPOINT
-npm run dev
-```
+### Phase 2: Encrypted Routing
+- Integration of client-side encryption.
+- Relayer setup for payload management.
 
- 4. **Test Flow**
- • Wallet 1 → create proposal
- • Wallet 2 → delegate votes
- • Wallet 3 → vote
- • Arcium MXE → tallies votes confidentially
- • Frontend reads final tally and displays
+### Phase 3: Arcium Integration
+- Deployment of TEE (Trusted Execution Environment) nodes.
+- Live confidential compute for vote tallying.
 
-⸻
+### Phase 4: Mainnet
+- Full audit and mainnet launch on Solana.
 
-# 📝 4. Devnet Checklist
- • Wallets set to Devnet
- • Program ID updated in frontend .env
- • Devnet SOL funded
- • MXE node running and reachable
- • Frontend deployed to Vercel only
- • Delegation and voting tested
- • Proposal execution after deadline verified
+## Live Demo
+[https://gov-encrypt.vercel.app/](https://gov-encrypt.vercel.app/)
+
+## Future Expansion
+- **Multi-chain DAO support**: Bringing confidential governance to Ethereum and Cosmos.
+- **Private OTC Deals**: Native support for confidential token swaps between DAOs.
