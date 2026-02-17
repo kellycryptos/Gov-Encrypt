@@ -42,7 +42,7 @@
                     "isSigner": false
                 },
                 {
-                    "name": "proposer",
+                    "name": "creator",
                     "isMut": true,
                     "isSigner": true
                 },
@@ -54,16 +54,46 @@
             ],
             "args": [
                 {
-                    "name": "cid",
+                    "name": "title",
                     "type": "string"
                 },
                 {
-                    "name": "startTime",
-                    "type": "i64"
+                    "name": "description",
+                    "type": "string"
                 },
                 {
-                    "name": "endTime",
+                    "name": "deadline",
                     "type": "i64"
+                }
+            ]
+        },
+        {
+            "name": "delegateVote",
+            "accounts": [
+                {
+                    "name": "delegation",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "delegator",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "delegate",
+                    "type": "publicKey"
+                },
+                {
+                    "name": "weight",
+                    "type": "u64"
                 }
             ]
         },
@@ -71,7 +101,7 @@
             "name": "submitEncryptedVote",
             "accounts": [
                 {
-                    "name": "encryptedVoteAccount",
+                    "name": "encryptedVote",
                     "isMut": true,
                     "isSigner": false
                 },
@@ -93,34 +123,38 @@
             ],
             "args": [
                 {
-                    "name": "encryptedVoteBlob",
+                    "name": "encryptedBlob",
                     "type": "bytes"
                 }
             ]
         },
         {
-            "name": "delegatePrivately",
+            "name": "vote",
             "accounts": [
                 {
-                    "name": "delegationCommitmentAccount",
+                    "name": "proposal",
                     "isMut": true,
                     "isSigner": false
                 },
                 {
-                    "name": "delegator",
-                    "isMut": true,
-                    "isSigner": true
-                },
-                {
-                    "name": "systemProgram",
+                    "name": "daoState",
                     "isMut": false,
                     "isSigner": false
+                },
+                {
+                    "name": "mpcNode",
+                    "isMut": true,
+                    "isSigner": true
                 }
             ],
             "args": [
                 {
-                    "name": "encryptedDelegationBlob",
-                    "type": "bytes"
+                    "name": "voteChoice",
+                    "type": "u8"
+                },
+                {
+                    "name": "weight",
+                    "type": "u64"
                 }
             ]
         }
@@ -136,18 +170,22 @@
                         "type": "publicKey"
                     },
                     {
-                        "name": "proposalCount",
-                        "type": "u64"
+                        "name": "authorizedMpcNode",
+                        "type": "publicKey"
                     },
                     {
                         "name": "quorumThreshold",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "proposalCount",
                         "type": "u64"
                     }
                 ]
             }
         },
         {
-            "name": "ProposalAccount",
+            "name": "Proposal",
             "type": {
                 "kind": "struct",
                 "fields": [
@@ -156,40 +194,60 @@
                         "type": "u64"
                     },
                     {
-                        "name": "proposer",
+                        "name": "creator",
                         "type": "publicKey"
                     },
                     {
-                        "name": "cid",
+                        "name": "title",
                         "type": "string"
                     },
                     {
-                        "name": "startTime",
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "name": "deadline",
                         "type": "i64"
                     },
                     {
-                        "name": "endTime",
-                        "type": "i64"
+                        "name": "yesVotes",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "noVotes",
+                        "type": "u64"
                     },
                     {
                         "name": "status",
                         "type": {
                             "defined": "ProposalStatus"
                         }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Delegation",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "delegator",
+                        "type": "publicKey"
                     },
                     {
-                        "name": "finalYesVotes",
-                        "type": "u64"
+                        "name": "delegate",
+                        "type": "publicKey"
                     },
                     {
-                        "name": "finalNoVotes",
+                        "name": "weight",
                         "type": "u64"
                     }
                 ]
             }
         },
         {
-            "name": "EncryptedVoteAccount",
+            "name": "EncryptedVote",
             "type": {
                 "kind": "struct",
                 "fields": [
@@ -230,6 +288,23 @@
                     }
                 ]
             }
+        }
+    ],
+    "errors": [
+        {
+            "code": 6000,
+            "name": "VotingClosed",
+            "msg": "Voting period is closed"
+        },
+        {
+            "code": 6001,
+            "name": "InvalidVoteChoice",
+            "msg": "Invalid vote choice"
+        },
+        {
+            "code": 6002,
+            "name": "UnauthorizedNode",
+            "msg": "Unauthorized MPC node"
         }
     ]
 }

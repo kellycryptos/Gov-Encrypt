@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { SolanaProvider } from "../components/SolanaProvider";
+// import { SolanaProvider } from "../components/SolanaProvider"; // Temporarily disabled for Phase 1/2
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Gov Encrypt",
-  description: "Confidential Governance Layer",
+  title: "Gov Encrypt | Confidential Governance Layer",
+  description: "The Confidential Governance Layer for Serious DAOs",
 };
 
 export default function RootLayout({
@@ -16,9 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body className={inter.className}>
-        <SolanaProvider>{children}</SolanaProvider>
+        {/* <SolanaProvider> */}
+        {children}
+        {/* </SolanaProvider> */}
       </body>
     </html>
   );

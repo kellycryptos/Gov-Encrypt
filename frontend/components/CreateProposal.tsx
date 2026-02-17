@@ -1,10 +1,61 @@
 import React, { useState } from 'react';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import * as anchor from '@coral-xyz/anchor';
+import { PublicKey } from '@solana/web3.js';
+import idl from '../src/idl/gov_encrypt.json';
 import { Card } from './ui/Card';
 import { Button, Input } from './ui';
 
+const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+
 export const CreateProposal: React.FC = () => {
+    const { connection } = useConnection();
+    const { publicKey, sendTransaction } = useWallet();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleCreate = async () => {
+        if (!publicKey) return;
+        try {
+            setLoading(true);
+            const provider = new anchor.AnchorProvider(
+                connection,
+                { publicKey, signTransaction: async (tx: any) => tx, signAllTransactions: async (txs: any) => txs },
+                { commitment: "processed" }
+            );
+            const program = new anchor.Program(idl as any, provider);
+
+            const [daoStatePda] = PublicKey.findProgramAddressSync([Buffer.from("dao_state")], PROGRAM_ID);
+            const daoState = await program.account.daoAccount.fetch(daoStatePda);
+
+            const [proposalPda] = PublicKey.findProgramAddressSync(
+                [Buffer.from("proposal"), new anchor.BN(daoState.proposalCount).toArrayLike(Buffer, "le", 8)],
+                PROGRAM_ID
+            );
+
+            const deadline = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60); // 3 days from now
+
+            const tx = await program.methods
+                .createProposal(title, description, new anchor.BN(deadline))
+                .accounts({
+                    daoState: daoStatePda,
+                    proposal: proposalPda,
+                    creator: publicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                })
+                .transaction();
+
+            await sendTransaction(tx, connection);
+            setTitle('');
+            setDescription('');
+            alert('Proposal created!');
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <Card className="mb-6">
@@ -27,7 +78,13 @@ export const CreateProposal: React.FC = () => {
                         onChange={(e) => setDescription(e.target.value)}
                     />
                 </div>
-                <Button className="w-full h-11 !font-bold">Publish to Arcium</Button>
+                <Button
+                    onClick={handleCreate}
+                    disabled={!publicKey || loading || !title}
+                    className="w-full h-11 !font-bold"
+                >
+                    {loading ? 'Publishing...' : 'Publish to Arcium'}
+                </Button>
             </div>
         </Card>
     );

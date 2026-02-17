@@ -6,8 +6,7 @@ const nextConfig: NextConfig = {
     "@solana/wallet-adapter-react",
     "@solana/wallet-adapter-react-ui",
     "@solana/wallet-adapter-wallets",
-    "@solana/web3.js",
-    "@coral-xyz/anchor"
+    "@solana/web3.js"
   ],
   webpack: (config) => {
     config.resolve.fallback = { fs: false, path: false, os: false, crypto: false, stream: false };

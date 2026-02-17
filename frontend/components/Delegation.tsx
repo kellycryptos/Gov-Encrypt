@@ -40,9 +40,9 @@ export function Delegation() {
             const encryptedDelegation = Buffer.from(delegateAddress.slice(0, 32));
 
             const tx = await program.methods
-                .delegatePrivately(encryptedDelegation)
+                .delegateVote(new PublicKey(delegateAddress), new anchor.BN(100)) // Static weight for demo
                 .accounts({
-                    delegationCommitmentAccount: delegationPda,
+                    delegation: delegationPda,
                     delegator: publicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 })
