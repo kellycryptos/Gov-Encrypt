@@ -1,12 +1,31 @@
-﻿node_modules
+﻿# Node
+node_modules
 dist
 .next
 out
 build
-target
-.DS_Store
-.env.local
-.env
 .vercel
 
+# Rust / Anchor
+target
+.anchor
+**/*.rs.bk
+
+# System
+.DS_Store
+.vscode
+.idea
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.log
+
+# Wallets / Keys
 .wallets/
+**/id.json
+keypair.json
+wallet.json
