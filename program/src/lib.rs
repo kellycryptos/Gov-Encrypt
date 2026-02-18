@@ -1,14 +1,15 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("A71T7Y4SavyuEHg4yMLWELceX68PTyhwjWbFWy74w1Ah");
 
 #[program]
 pub mod gov_encrypt {
     use super::*;
 
-    pub fn initialize_dao(ctx: Context<InitializeDao>, quorum_threshold: u64) -> Result<()> {
+    pub fn initialize_dao(ctx: Context<InitializeDao>, quorum_threshold: u64, authorized_mpc_node: Pubkey) -> Result<()> {
         let dao_state = &mut ctx.accounts.dao_state;
         dao_state.authority = ctx.accounts.authority.key();
+        dao_state.authorized_mpc_node = authorized_mpc_node;
         dao_state.quorum_threshold = quorum_threshold;
         dao_state.proposal_count = 0;
         Ok(())
@@ -50,8 +51,15 @@ pub mod gov_encrypt {
 
     pub fn vote(ctx: Context<Vote>, vote_choice: u8, weight: u64) -> Result<()> {
         let proposal = &mut ctx.accounts.proposal;
+        let dao_state = &ctx.accounts.dao_state;
         
-        // Simple logic for now, real logic would verify MPC node signature
+        // Verify MPC node signature matches the authorized node
+        require_keys_eq!(
+            ctx.accounts.mpc_node.key(),
+            dao_state.authorized_mpc_node,
+            ErrorCode::UnauthorizedNode
+        );
+
         match vote_choice {
             1 => proposal.yes_votes += weight, // For
             2 => proposal.no_votes += weight,  // Against
@@ -107,7 +115,7 @@ pub struct Vote<'info> {
     #[account(mut)]
     pub proposal: Account<'info, Proposal>,
     pub dao_state: Account<'info, DaoAccount>,
-    #[account(mut)] // Should be signer in real implementation to verify MPC node
+    #[account(mut)]
     pub mpc_node: Signer<'info>, 
 }
 
