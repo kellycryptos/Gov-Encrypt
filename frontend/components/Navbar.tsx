@@ -2,16 +2,21 @@
 
 import Link from "next/link";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { Shield, Menu } from "lucide-react";
+import { Shield, Menu, X } from "lucide-react";
 import { Button } from "./ui";
+import { useState } from "react";
 
 
 export function Navbar() {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const closeMenu = () => setIsMobileMenuOpen(false);
+
     return (
-        <header className="h-[72px] border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl sticky top-0 z-50">
+        <header className="h-[72px] border-b border-white/5 bg-[#000000]/80 backdrop-blur-xl sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
                 {/* Brand */}
-                <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <Link href="/" onClick={closeMenu} className="flex items-center gap-2 hover:opacity-80 transition-opacity z-50">
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-arcium-500 to-arcium-300 flex items-center justify-center shadow-glow">
                         <Shield className="w-5 h-5 text-white" fill="currentColor" />
                     </div>
@@ -26,13 +31,29 @@ export function Navbar() {
                 </nav>
 
                 {/* Actions */}
-                <div className="flex items-center gap-3">
-                    <WalletMultiButton className="!bg-[#6366f1] hover:!bg-[#4f46e5] !h-9 !px-4 !rounded-lg !font-medium !text-sm" />
-                    <Button variant="ghost" size="icon" className="md:hidden">
-                        <Menu className="w-5 h-5" />
+                <div className="flex items-center gap-3 z-50">
+                    <div className="max-w-[140px] md:max-w-none">
+                        <WalletMultiButton className="!bg-[var(--primary)] hover:!bg-[var(--accent)] !rounded-lg !font-medium" />
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="md:hidden text-white hover:bg-white/10"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    >
+                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                     </Button>
                 </div>
             </div>
+
+            {/* Mobile Menu Overlay */}
+            {isMobileMenuOpen && (
+                <div className="fixed inset-0 top-[72px] bg-black/95 backdrop-blur-xl border-t border-white/10 flex flex-col p-6 gap-2 md:hidden animate-in slide-in-from-top-5">
+                    <Link href="/governance" onClick={closeMenu} className="p-4 text-xl font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all">Launch App</Link>
+                    <Link href="/treasury" onClick={closeMenu} className="p-4 text-xl font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all">Treasury</Link>
+                    <Link href="/docs" onClick={closeMenu} className="p-4 text-xl font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all">Docs</Link>
+                </div>
+            )}
         </header>
     );
 }
