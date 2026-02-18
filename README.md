@@ -24,6 +24,20 @@ Gov-Encrypt is a confidential governance protocol built on Solana using Anchor a
 -   **Relayer (`/relayer`)**: Batches encrypted payloads to the Arcium Network.
 -   **Confidential Layer**: Arcium MXE nodes processing private inputs.
 
+### 🔄 Data Flow: Private Voting
+1.  **User** selects "Approve/Reject".
+2.  **Frontend** generates random private key encryption.
+3.  **Frontend** encrypts vote vector: `Encrypt(Vote, PubKey)`.
+4.  **Frontend** submits `submit_encrypted_vote` transaction to **Solana**.
+5.  **Relayer** detects new vote event and triggers **Arcium** node.
+6.  **Arcium** computes new tally result (encrypted) and proof.
+7.  **Relayer** submits result update to **Solana**.
+
+### 🛡️ Security Model
+-   **Client-Side Encryption**: Inputs are encrypted before leaving the user's device.
+-   **MPC Tallying**: Votes are never decrypted individually; only the final sum is reconstructed.
+-   **Isolation**: Frontend is isolated from backend secrets.
+
 ## 🔐 Arcium Confidential Governance Integration
 
 Gov-Encrypt integrates Arcium’s confidential compute layer to enable encrypted governance primitives on Solana. Voting weights, delegation relationships, and treasury simulations are processed confidentially while maintaining verifiable DAO state.
