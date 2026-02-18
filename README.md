@@ -1,71 +1,82 @@
 # Gov-Encrypt
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Solana](https://img.shields.io/badge/Solana-Devnet-green)
-![Anchor](https://img.shields.io/badge/Anchor-0.32.1-blueviolet)
-![Arcium](https://img.shields.io/badge/Confidential-Layer-orange)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Solana](https://img.shields.io/badge/Solana-Devnet-green)](https://solana.com)
+[![Anchor](https://img.shields.io/badge/Anchor-0.32.1-blueviolet)](https://www.anchor-lang.com/)
+[![Arcium](https://img.shields.io/badge/Confidential-Layer-orange)](https://arcium.com)
+[![X (formerly Twitter)](https://img.shields.io/badge/X-%40gov__encrypt-black)](https://x.com/gov_encrypt)
 
-**The Confidential Governance Infrastructure for DAOs**
+**Confidential Governance Infrastructure for DAOs**
 
-## Vision
-Governance without transparency tradeoffs. We believe that for DAOs to mature into global institutions, they require the ability to make strategic decisions without immediate public exposure.
+Gov-Encrypt is a confidential governance protocol built on Solana using Anchor and Arcium. It enables private voting, encrypted delegation, confidential treasury simulations, and reputation-weighted quorum systems.
 
-## Problem: Information Asymmetry
-Current DAO governance models default to radical transparency, creating a critical vulnerability: **Information Asymmetry**.
-- **Voting Choices**: Exposed in real-time, leading to bribery, coercion, and "follow-the-whale" voting.
-- **Delegation Graphs**: Public social graphs create pressure and centralization risks.
-- **Strategic Treasury**: Market participants front-run DAO trades when proposals are public.
+## 📂 Repositories
 
-This reduces participation and creates massive coordination risks for serious organizations.
+| Component | Repository | Description |
+| :--- | :--- | :--- |
+| **Main Protocol** | [Gov-Encrypt](https://github.com/kellycryptos/Gov-Encrypt) | Core repository containing the Anchor Program, Next.js Frontend, and Relayer. |
 
-## Solution: Confidential Governance Layer
-Gov-Encrypt solves this by leveraging **Arcium's Confidential Computing Network (MXE)**.
-Instead of public votes, we use encrypted computation to process governance actions.
+**Architecture Overview:**
+-   **Anchor Program (`/program`)**: Deployed on Solana Devnet. Manages proposal state and settlement.
+-   **Frontend (`/frontend`)**: Next.js application for client-side encryption and user interaction.
+-   **Relayer (`/relayer`)**: Batches encrypted payloads to the Arcium Network.
+-   **Confidential Layer**: Arcium MXE nodes processing private inputs.
 
-- **Private Voting**: User votes are encrypted client-side (`x25519` + `RescueCipher`) and remain secret.
-- **Blind Tallying**: Arcis MPC circuits compute the final result without ever revealing individual ballots.
-- **Verifiable Integrity**: The final tally is posted on-chain, mathematically proven correct, while preserving privacy.
+## 🔐 Arcium Confidential Governance Integration
 
-## Architecture
-1.  **Next.js Frontend**: Client-side encryption of user intent.
-2.  **Relayer**: Batches encrypted payloads to the Arcium Network.
-3.  **Confidential Compute Layer (Arcium)**: Secure Multiparty Execution (MXE) environments for processing votes.
-4.  **Solana Governance Program**: On-chain Anchor program for proposal state management and final settlement.
+Gov-Encrypt integrates Arcium’s confidential compute layer to enable encrypted governance primitives on Solana. Voting weights, delegation relationships, and treasury simulations are processed confidentially while maintaining verifiable DAO state.
 
-## Integration Progress
-We are actively building on the cutting edge of Solana privacy:
--   ✅ **Solana Devnet**: Deployed and active.
--   ✅ **Anchor 0.32.1**: Upgraded to the latest framework.
--   🚧 **Arcis MPC Circuits**: Implementing private voting logic.
--   🚧 **Confidential Layer**: Transitioning from public to fully confidential governance.
+**Current Status:**
+- [x] Devnet deployment complete
+- [x] Custom authority wallet configured
+- [x] Anchor program deployed
+- [x] IDL synced
+- [x] Frontend connected to Devnet
+- [ ] Arcium SDK integration (in progress)
+- [ ] Encrypted voting flow
+- [ ] Confidential delegation logic
+- [ ] Private treasury simulation
+- [ ] Reputation-weighted encrypted quorum
 
-## Requirements Checklist
-To run this project locally or as a node operator, you need:
--   [x] **Rust**: Latest Stable
--   [x] **Solana CLI**: v2.3.0
--   [x] **Anchor CLI**: v0.32.1
--   [x] **Docker**: For running Arcium MXE nodes locally.
+## 🚀 Roadmap
 
-## Community & Resources
-Join the movement for private governance:
+-   **Phase 1 — Anchor Devnet Deployment** (Complete) ✅
+-   **Phase 2 — Frontend Devnet Integration** (Complete) ✅
+-   **Phase 3 — Arcium Confidential Compute Integration** (In Progress) 🚧
+-   **Phase 4 — Public Devnet Demo**
+-   **Phase 5 — Mainnet Readiness & Security Review**
 
--   **Official X**: [https://x.com/gov_encrypt](https://x.com/gov_encrypt)
--   **GitHub Repository**: [https://github.com/kellycryptos/Gov-Encrypt](https://github.com/kellycryptos/Gov-Encrypt)
--   **Arcium Documentation**: [https://docs.arcium.com](https://docs.arcium.com)
+## Vision & Problem
+**Information Asymmetry** in current DAOs leads to:
+-   **Bribery & Coercion**: Visible votes allow pressure.
+-   **Centralization**: Public delegation graphs create "follow-the-whale" effects.
+-   **Front-running**: Public treasury discussions are exploited by market participants.
 
-## Live Demo
-[https://gov-encrypt.vercel.app/](https://gov-encrypt.vercel.app/)
+**Solution**:
+Gov-Encrypt uses **Arcium's Confidential Computing Network (MXE)** to process governance actions.
+-   **Private Voting**: Encrypted client-side (`x25519` + `RescueCipher`).
+-   **Blind Tallying**: MPC circuits compute results without revealing ballots.
+-   **Verifiable Integrity**: Mathematical proofs of correctness posted on-chain.
 
-## Devnet Deployment
-Quick start for developers:
+## Quick Start (Devnet)
+
 ```bash
 # 1. Install Dependencies
 npm install -g @coral-xyz/anchor-cli
 
-# 2. Generate Keypair
+# 2. Keypair Setup
 solana-keygen new
 
 # 3. Deploy
 anchor build
 anchor deploy --provider.cluster devnet
 ```
+
+## Community
+
+-   **Official X**: [https://x.com/gov_encrypt](https://x.com/gov_encrypt)
+-   **GitHub**: [https://github.com/kellycryptos/Gov-Encrypt](https://github.com/kellycryptos/Gov-Encrypt)
+-   **Arcium Docs**: [https://docs.arcium.com](https://docs.arcium.com)
+
+## Live Demo
+[https://gov-encrypt.vercel.app/](https://gov-encrypt.vercel.app/)

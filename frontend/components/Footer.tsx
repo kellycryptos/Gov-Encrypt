@@ -16,8 +16,11 @@ export function Footer() {
 
                 <div className="flex items-center gap-6 text-sm text-slate-400">
                     <Link href="/docs" className="hover:text-white transition-colors">Docs</Link>
-                    <a href="https://x.com/kellycryptos" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">
-                        X (@kellycryptos)
+                    <a href="https://github.com/kellycryptos/Gov-Encrypt" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        GitHub
+                    </a>
+                    <a href="https://x.com/gov_encrypt" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">
+                        X (@gov_encrypt)
                     </a>
                 </div>
             </div>
