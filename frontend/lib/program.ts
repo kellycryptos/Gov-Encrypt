@@ -6,7 +6,7 @@ import { arcium } from "./arcium";
 
 // Define the program ID
 // This should be updated after deployment
-const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "CXKnSTk84CBEmiDBrb7k8agp2g5AMSBUwkSVeqSxwWvh");
+const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "8FbVRnSmv1FtZvgYA4HjN7HN9BCQVZYuR3jf2sFsscgV");
 
 
 export const getProgram = (wallet: WalletContextState) => {
