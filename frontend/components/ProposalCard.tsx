@@ -50,7 +50,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onVoteSucc
     };
 
     return (
-        <Card className="mb-4 group border-l-4 border-l-indigo-500 hover:border-l-indigo-400 transition-all flex flex-col justify-between">
+        <Card className="mb-4 group border-l-4 border-l-arcium-500 hover:border-l-arcium-400 transition-all flex flex-col justify-between">
             <div className="flex flex-col gap-6 p-6 h-full">
                 <div className="space-y-3 flex-1">
                     <div className="flex items-center gap-3">
@@ -65,7 +65,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onVoteSucc
                         <span className="text-[10px] text-slate-500 font-medium">#{id}</span>
                     </div>
 
-                    <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">
+                    <h3 className="text-xl font-bold text-white group-hover:text-arcium-400 transition-colors">
                         {title}
                     </h3>
                     <p className="text-sm text-slate-400 leading-relaxed max-w-2xl line-clamp-3">
@@ -81,7 +81,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onVoteSucc
                         </div>
                         <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-indigo-500 transition-all duration-500"
+                                className="h-full bg-arcium-500 transition-all duration-500"
                                 style={{ width: `${yesPercentage}%` }}
                             />
                         </div>

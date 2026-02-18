@@ -12,7 +12,7 @@ export function Navbar() {
             <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
                 {/* Brand */}
                 <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.3)]">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-arcium-500 to-arcium-300 flex items-center justify-center shadow-glow">
                         <Shield className="w-5 h-5 text-white" fill="currentColor" />
                     </div>
                     <span className="font-bold tracking-tight text-xl text-white">Gov Encrypt</span>

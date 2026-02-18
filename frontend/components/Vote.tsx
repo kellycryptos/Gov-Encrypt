@@ -103,7 +103,7 @@ export default function Vote({ proposalId }: { proposalId: number }) {
             <Button
                 onClick={castVote}
                 disabled={!publicKey || voteChoice === null || loading}
-                className="w-full h-12 !font-extrabold shadow-sm"
+                className="w-full h-12 !font-extrabold shadow-glow hover:shadow-glow-lg transition-all"
             >
                 {loading ? "Processing Encryption..." : "Submit Encrypted Vote"}
             </Button>
