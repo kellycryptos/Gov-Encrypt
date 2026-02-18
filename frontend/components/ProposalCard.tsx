@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from './ui';
 import { Check, X, Loader2 } from "lucide-react";
 import { Proposal } from "../lib/mockApi";
@@ -13,6 +13,14 @@ interface ProposalCardProps {
 export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onVoteSuccess }) => {
     const wallet = useWallet();
     const [isVoting, setIsVoting] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Prevent hydration mismatch
+    if (!mounted) return null;
 
     const { id, title, description, status, yesVotes, noVotes, deadline } = proposal;
 

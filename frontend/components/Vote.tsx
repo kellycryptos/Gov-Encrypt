@@ -1,21 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import idl from "../src/idl/gov_encrypt.json";
 import { Card } from "./ui/Card";
 import { Button } from "./ui";
+import { arcium } from "../lib/arcium"; // Import Arcium client
 
 const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 export default function Vote({ proposalId }: { proposalId: number }) {
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const [voteChoice, setVoteChoice] = useState<number | null>(null); // 1 = Yes, 0 = No
     const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(false);
+
+    if (!mounted) return null;
 
     const castVote = async () => {
         if (!publicKey || voteChoice === null) return;
@@ -24,10 +33,8 @@ export default function Vote({ proposalId }: { proposalId: number }) {
             setLoading(true);
             setStatus("🔒 Encrypting vote client-side...");
 
-            // Simulate encryption delay for UX
-            await new Promise(r => setTimeout(r, 1000));
-
-            const encryptedBlob = Buffer.from([voteChoice, 0, 0, 0]); // In prod: Arcium SDK logic
+            // Use Arcium client for encryption
+            const encryptedBlob = await arcium.encryptVote(voteChoice, publicKey, proposalId);
 
             setStatus("🚀 Submitting encrypted blob to Solana...");
 
@@ -37,7 +44,8 @@ export default function Vote({ proposalId }: { proposalId: number }) {
                 { commitment: "processed" }
             );
 
-            const program = new anchor.Program(idl as any, provider);
+            // @ts-ignore
+            const program = new anchor.Program(idl, PROGRAM_ID, provider);
 
             const [proposalPda] = PublicKey.findProgramAddressSync(
                 [Buffer.from("proposal"), new anchor.BN(proposalId).toArrayLike(Buffer, "le", 8)],
@@ -49,8 +57,11 @@ export default function Vote({ proposalId }: { proposalId: number }) {
                 PROGRAM_ID
             );
 
+            // Convert Uint8Array to Request logic (Anchor expects Buffer or array)
+            const blobArgument = Buffer.from(encryptedBlob);
+
             const tx = await program.methods
-                .submitEncryptedVote(encryptedBlob)
+                .submitEncryptedVote(blobArgument)
                 .accounts({
                     encryptedVote: votePda,
                     proposal: proposalPda,
@@ -74,16 +85,16 @@ export default function Vote({ proposalId }: { proposalId: number }) {
             <h3 className="text-lg font-bold mb-6">Cast Private Vote</h3>
             <div className="grid grid-cols-2 gap-4 mb-8">
                 <Button
-                    variant={voteChoice === 1 ? 'primary' : 'outline'}
+                    variant={voteChoice === 1 ? 'default' : 'outline'}
                     onClick={() => setVoteChoice(1)}
                     className={`h-16 text-base !rounded-xl ${voteChoice === 1 ? 'shadow-indigo-100 shadow-xl' : ''}`}
                 >
                     Approve
                 </Button>
                 <Button
-                    variant={voteChoice === 0 ? 'primary' : 'outline'}
+                    variant={voteChoice === 0 ? 'secondary' : 'outline'}
                     onClick={() => setVoteChoice(0)}
-                    className={`h-16 text-base !rounded-xl !bg-rose-50 !text-rose-500 !border-rose-100 font-bold ${voteChoice === 0 ? '!bg-rose-500 !text-white !border-transparent shadow-rose-100 shadow-xl' : ''}`}
+                    className={`h-16 text-base !rounded-xl ${voteChoice === 0 ? 'shadow-rose-100 shadow-xl' : ''}`}
                 >
                     Reject
                 </Button>

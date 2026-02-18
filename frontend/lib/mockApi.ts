@@ -3,9 +3,9 @@ export interface Proposal {
     title: string;
     description: string;
     status: 'active' | 'passed' | 'rejected' | 'executed';
-    votesFor: number;
-    votesAgainst: number;
-    endDate: string;
+    yesVotes: number;
+    noVotes: number;
+    deadline: string;
     tags: string[];
 }
 

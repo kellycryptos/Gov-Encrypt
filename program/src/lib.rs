@@ -1,4 +1,6 @@
 use anchor_lang::prelude::*;
+use arcis::*;
+use arcium_anchor::prelude::*;
 
 declare_id!("8FbVRnSmv1FtZvgYA4HjN7HN9BCQVZYuR3jf2sFsscgV");
 
@@ -6,12 +8,26 @@ declare_id!("8FbVRnSmv1FtZvgYA4HjN7HN9BCQVZYuR3jf2sFsscgV");
 pub mod gov_encrypt {
     use super::*;
 
+    // Offset for the Arcis circuit binary
+    pub fn comp_def_offset() -> u64 {
+        // In a real deployment, this points to where the circuit binary is in the account data
+        // For now, we use a placeholder offset
+        8 + 32 + 32 + 8 + 8 // After DaoAccount fixed fields
+    }
+
     pub fn initialize_dao(ctx: Context<InitializeDao>, quorum_threshold: u64, authorized_mpc_node: Pubkey) -> Result<()> {
         let dao_state = &mut ctx.accounts.dao_state;
         dao_state.authority = ctx.accounts.authority.key();
         dao_state.authorized_mpc_node = authorized_mpc_node;
         dao_state.quorum_threshold = quorum_threshold;
         dao_state.proposal_count = 0;
+        
+        // Register the computation definition for private voting
+        ctx.accounts.program.init_comp_def(
+            dao_state.key(),
+            comp_def_offset(), // Offset where the circuit binary is stored
+        )?;
+
         Ok(())
     }
 
@@ -49,25 +65,33 @@ pub mod gov_encrypt {
         Ok(())
     }
 
-    pub fn vote(ctx: Context<Vote>, vote_choice: u8, weight: u64) -> Result<()> {
-        let proposal = &mut ctx.accounts.proposal;
-        let dao_state = &ctx.accounts.dao_state;
+
+    #[encrypted]
+    pub fn vote(ctx: Context<Vote>, vote_values: Enc<Shared, VoteValues>) -> Result<Enc<Shared, VoteValues>> {
+        // Tally logic executed inside MPC
+        // vote_values contains { yes_weight, no_weight }
+        // We add this vote to the running tally in the Proposal account state (which must be encrypted)
         
-        // Verify MPC node signature matches the authorized node
-        require_keys_eq!(
-            ctx.accounts.mpc_node.key(),
-            dao_state.authorized_mpc_node,
-            ErrorCode::UnauthorizedNode
-        );
-
-        match vote_choice {
-            1 => proposal.yes_votes += weight, // For
-            2 => proposal.no_votes += weight,  // Against
-            _ => return err!(ErrorCode::InvalidVoteChoice),
-        }
-
-        Ok(())
+        // Note: For this migration, we are assuming 'Proposal' state will hold encrypted accumulators.
+        // In a real Arcis app, we'd read/write encrypted state. 
+        // Here we demonstrate the circuit logic: returning the updated tally.
+        
+        // Simulating element-wise addition for the tally
+        // let current_tally = ... load from state ...
+        // let new_tally = current_tally + vote_values;
+        // return Ok(new_tally);
+        
+        Ok(vote_values) // Placeholder: passing through for now until state migration
     }
+
+        Ok(vote_values) 
+    }
+}
+
+#[derive(ArcisType)]
+pub struct VoteValues {
+    pub yes_weight: u64,
+    pub no_weight: u64,
 }
 
 #[derive(Accounts)]
@@ -76,6 +100,7 @@ pub struct InitializeDao<'info> {
     pub dao_state: Account<'info, DaoAccount>,
     #[account(mut)]
     pub authority: Signer<'info>,
+    pub program: Program<'info, crate::program::GovEncrypt>,
     pub system_program: Program<'info, System>,
 }
 
