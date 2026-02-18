@@ -89,6 +89,36 @@ export function Dashboard() {
                 </div>
             )}
 
+            {/* Voting Notice */}
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 flex items-start gap-3">
+                <div className="p-2 bg-yellow-500/10 rounded-lg">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-5 h-5 text-yellow-500"
+                    >
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                        <path d="M12 9v4" />
+                        <path d="M12 17h.01" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 className="text-yellow-500 font-bold mb-1">Voting Notice</h3>
+                    <p className="text-yellow-200/80 text-sm leading-relaxed">
+                        Voting is temporarily disabled while the confidential computation layer (Arcium MPC) is being finalized.
+                        <br className="my-2" />
+                        All proposals and governance actions are currently view-only. Once the Arcium integration is complete, votes will be fully private, tallied securely, and published on Solana Devnet.
+                    </p>
+                </div>
+            </div>
+
             {/* Proposals */}
             <div className="space-y-4">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
@@ -104,18 +134,18 @@ export function Dashboard() {
                             <Button
                                 size="sm"
                                 variant="outline"
-                                className="border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
-                                onClick={() => handleVote(prop.id, 'for')}
-                                disabled={!!voting}
+                                className="border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 opacity-50 cursor-not-allowed"
+                                onClick={() => alert("Voting is temporarily disabled while Arcium MPC is being integrated.")}
+                                disabled={true}
                             >
                                 Vote For
                             </Button>
                             <Button
                                 size="sm"
                                 variant="outline"
-                                className="border-red-500/20 text-red-400 hover:bg-red-500/10"
-                                onClick={() => handleVote(prop.id, 'against')}
-                                disabled={!!voting}
+                                className="border-red-500/20 text-red-400 hover:bg-red-500/10 opacity-50 cursor-not-allowed"
+                                onClick={() => alert("Voting is temporarily disabled while Arcium MPC is being integrated.")}
+                                disabled={true}
                             >
                                 Against
                             </Button>
