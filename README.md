@@ -40,19 +40,56 @@ Gov-Encrypt is a confidential governance protocol built on Solana using Anchor a
 
 ## 🔐 Arcium Confidential Governance Integration
 
-Gov-Encrypt integrates Arcium’s confidential compute layer to enable encrypted governance primitives on Solana. Voting weights, delegation relationships, and treasury simulations are processed confidentially while maintaining verifiable DAO state.
+Gov-Encrypt integrates Arcium’s confidential compute layer to enable private, manipulation-resistant governance on Solana.
 
-**Current Status:**
+### The Problem
+
+Traditional on-chain governance exposes votes before the final tally. This enables strategic voting, coercion, bribery risk, and outcome manipulation before voting concludes.
+
+### Our Approach
+
+Gov-Encrypt processes governance logic inside encrypted shared state using Arcium’s confidential compute environment.
+
+### Architecture Overview
+
+1. Vote Submission
+- Users submit encrypted votes from the frontend.
+- Vote payloads are encrypted client-side before processing.
+
+2. Confidential Compute (Arcium)
+- Vote tallying occurs inside Arcium’s secure compute layer.
+- Delegation relationships are resolved privately.
+- Reputation-weighted quorum checks are evaluated confidentially.
+- Treasury simulations can be processed without exposing intermediate data.
+
+3. On-Chain Settlement (Solana Devnet)
+- Only final aggregated results are written on-chain.
+- No individual votes or intermediate governance state is exposed.
+- DAO state remains verifiable while preserving privacy.
+
+### What Runs Inside Arcium
+
+- Encrypted vote tallying
+- Confidential delegation resolution
+- Reputation-weighted quorum logic
+- Private treasury simulation evaluation
+
+### Privacy Benefits
+
+- Individual votes remain private
+- Governance cannot be manipulated through early visibility
+- Delegation relationships are not publicly exposed
+- Only final outcomes are published on-chain
+
+## 🧪 Current Implementation Status
+
 - [x] Devnet deployment complete
 - [x] Custom authority wallet configured
 - [x] Anchor program deployed
 - [x] IDL synced
 - [x] Frontend connected to Devnet
-- [ ] Arcium SDK integration (in progress)
-- [ ] Encrypted voting flow
-- [ ] Confidential delegation logic
-- [ ] Private treasury simulation
-- [ ] Reputation-weighted encrypted quorum
+- [ ] Full Arcium SDK production optimization
+- [ ] MPC performance hardening
 
 ## 🚀 Roadmap
 
