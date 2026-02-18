@@ -9,4 +9,4 @@ target
 .env
 .vercel
 
-deploy-wallet.json
+.wallets/
