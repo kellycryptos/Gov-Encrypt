@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("A71T7Y4SavyuEHg4yMLWELceX68PTyhwjWbFWy74w1Ah");
+declare_id!("CXKnSTk84CBEmiDBrb7k8agp2g5AMSBUwkSVeqSxwWvh");
 
 #[program]
 pub mod gov_encrypt {
