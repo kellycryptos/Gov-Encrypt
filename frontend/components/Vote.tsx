@@ -9,7 +9,7 @@ import { Card } from "./ui/Card";
 import { Button } from "./ui";
 import { arcium } from "../lib/arcium"; // Import Arcium client
 
-const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID || "8FbVRnSmv1FtZvgYA4HjN7HN9BCQVZYuR3jf2sFsscgV");
 
 export default function Vote({ proposalId }: { proposalId: number }) {
     const { connection } = useConnection();
