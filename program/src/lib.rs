@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("PLACEHOLDER_PROGRAM_ID");
+declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 #[program]
 pub mod gov_encrypt {
