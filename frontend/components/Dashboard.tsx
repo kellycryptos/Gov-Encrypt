@@ -2,51 +2,48 @@
 
 import { useEffect, useState } from "react";
 import { ProposalCard } from "./ProposalCard";
-import { Proposal } from "../lib/mockApi"; // Keep type for now
+import { Proposal, QuorumStatus } from "../lib/mockApi"; // Keep type for now
 import { useWallet } from "@solana/wallet-adapter-react";
-import { fetchProposals } from "../lib/program";
+import { useProgram } from "@/hooks/useProgram";
 import { mockApi } from "../lib/mockApi";
 import { Loader2 } from "lucide-react";
-// Removed unused imports like Button/Card/etc since they were only used in the removed logic or should be in ProposalCard
+import { Button } from "./ui/Button";
 
 export function Dashboard() {
-    const wallet = useWallet();
+    const { getProposals, submitVote, isConnected } = useProgram();
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [loading, setLoading] = useState(true);
-    const [useRealData, setUseRealData] = useState(false);
+    const [voting, setVoting] = useState<string | null>(null);
+    const [quorum, setQuorum] = useState<QuorumStatus | null>(null);
 
+    // Initial load
     useEffect(() => {
         const load = async () => {
             setLoading(true);
             try {
-                // Try fetching from real chain if wallet is connected
-                if (wallet.connected) {
-                    const realData = await fetchProposals(wallet);
-                    if (realData.length > 0) {
-                        setProposals(realData as any); // Cast for prototype
-                        setUseRealData(true);
-                    } else {
-                        // Fallback to mock if no data on chain yet
-                        const data = await mockApi.getProposals();
-                        setProposals(data);
-                    }
-                } else {
-                    // Default to mock for non-connected users
-                    const data = await mockApi.getProposals();
-                    setProposals(data);
-                }
+                // Fetch proposals
+                const data = await getProposals();
+                setProposals(data);
+
+                // Fetch quorum (mock for now)
+                const q = await mockApi.getQuorumStatus();
+                setQuorum(q);
             } catch (err) {
-                console.error("Failed to load proposals", err);
+                console.error("Failed to load dashboard data", err);
                 const data = await mockApi.getProposals();
                 setProposals(data);
             } finally {
                 setLoading(false);
             }
         };
-        loadData();
-    }, [isConnected]); // Re-run when wallet connection changes
+        load();
+    }, [isConnected]); // Re-run when wallet connection changes, though data might be same public/private
 
     const handleVote = async (id: string, side: 'for' | 'against') => {
+        if (!isConnected) {
+            alert("Please connect your wallet first");
+            return;
+        }
         setVoting(id);
         try {
             await submitVote(id, side);
@@ -55,6 +52,7 @@ export function Dashboard() {
             const updated = await getProposals();
             setProposals(updated);
         } catch (e) {
+            console.error(e);
             alert("Failed to submit vote to MPC relayer");
         } finally {
             setVoting(null);
@@ -94,48 +92,36 @@ export function Dashboard() {
             {/* Proposals */}
             <div className="space-y-4">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    active Proposals <span className="text-xs bg-indigo-500/10 text-indigo-400 px-2 py-1 rounded-full">{proposals.length}</span>
+                    Active Proposals <span className="text-xs bg-indigo-500/10 text-indigo-400 px-2 py-1 rounded-full">{proposals.length}</span>
                 </h2>
 
-                {proposals.map((prop) => {
-                    const totalVotes = prop.votesFor + prop.votesAgainst;
-                    const yesPercentage = totalVotes > 0 ? (prop.votesFor / totalVotes) * 100 : 0;
-                    const noPercentage = totalVotes > 0 ? (prop.votesAgainst / totalVotes) * 100 : 0;
-
-                    return (
-                        <ProposalCard
-                            key={prop.id}
-                            id={prop.id}
-                            title={prop.title}
-                            description={prop.description}
-                            status={prop.status}
-                            yesPercentage={yesPercentage}
-                            noPercentage={noPercentage}
-                            deadline={new Date(prop.endDate).toLocaleDateString()}
-                        >
-                            <div className="grid grid-cols-2 gap-2">
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
-                                    onClick={() => handleVote(prop.id, 'for')}
-                                    disabled={!!voting}
-                                >
-                                    Vote For
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="border-red-500/20 text-red-400 hover:bg-red-500/10"
-                                    onClick={() => handleVote(prop.id, 'against')}
-                                    disabled={!!voting}
-                                >
-                                    Against
-                                </Button>
-                            </div>
-                        </ProposalCard>
-                    );
-                })}
+                {proposals.map((prop) => (
+                    <ProposalCard
+                        key={prop.id}
+                        proposal={prop}
+                    >
+                        <div className="grid grid-cols-2 gap-2">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
+                                onClick={() => handleVote(prop.id, 'for')}
+                                disabled={!!voting}
+                            >
+                                Vote For
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-red-500/20 text-red-400 hover:bg-red-500/10"
+                                onClick={() => handleVote(prop.id, 'against')}
+                                disabled={!!voting}
+                            >
+                                Against
+                            </Button>
+                        </div>
+                    </ProposalCard>
+                ))}
             </div>
         </div>
     );
