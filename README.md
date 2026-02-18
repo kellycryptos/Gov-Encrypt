@@ -6,6 +6,8 @@
 [![Arcium](https://img.shields.io/badge/Confidential-Layer-orange)](https://arcium.com)
 [![X (formerly Twitter)](https://img.shields.io/badge/X-%40gov__encrypt-black)](https://x.com/gov_encrypt)
 
+Built by [@kellycryptos](https://x.com/kellycryptos)
+
 **Confidential Governance Infrastructure for DAOs**
 
 Gov-Encrypt is a confidential governance protocol built on Solana using Anchor and Arcium. It enables private voting, encrypted delegation, confidential treasury simulations, and reputation-weighted quorum systems.
@@ -43,8 +45,10 @@ Gov-Encrypt integrates Arcium’s confidential compute layer to enable encrypted
 -   **Phase 1 — Anchor Devnet Deployment** (Complete) ✅
 -   **Phase 2 — Frontend Devnet Integration** (Complete) ✅
 -   **Phase 3 — Arcium Confidential Compute Integration** (In Progress) 🚧
--   **Phase 4 — Public Devnet Demo**
+-   **Phase 4 — Public Devnet Demo** (CURRENT PHASE) 🚀
 -   **Phase 5 — Mainnet Readiness & Security Review**
+
+We are currently in **Phase 4 — Public Devnet Demo**. Gov-Encrypt is live on Solana Devnet and actively testing confidential governance workflows powered by Arcium.
 
 ## Vision & Problem
 **Information Asymmetry** in current DAOs leads to:

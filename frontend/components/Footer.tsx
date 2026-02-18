@@ -10,7 +10,7 @@ export function Footer() {
                         <Shield className="w-4 h-4 text-indigo-400" fill="currentColor" />
                     </div>
                     <p className="text-slate-500 text-sm">
-                        &copy; 2024 Gov Encrypt.
+                        &copy; 2024 Gov Encrypt. Built by <a href="https://x.com/kellycryptos" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">@kellycryptos</a>
                     </p>
                 </div>
 
