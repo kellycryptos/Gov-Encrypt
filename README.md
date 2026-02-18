@@ -61,3 +61,13 @@ Follow **[@kellycryptos](https://x.com/kellycryptos)** for updates.
 ## Future Expansion
 - **Multi-chain DAO support**: Bringing confidential governance to Ethereum and Cosmos.
 - **Private OTC Deals**: Native support for confidential token swaps between DAOs.
+
+## Devnet Deployment
+
+Steps:
+1. Install Rust
+2. Install Solana CLI
+3. Install Anchor 0.32.1
+4. solana-keygen new
+5. solana airdrop 2
+6. anchor deploy --provider.cluster devnet
