@@ -83,9 +83,9 @@ export default function Docs() {
                         </div>
                         <div className="space-y-6 relative border-l border-white/10 ml-3 pl-8">
                             {[
-                                { phase: "Phase 1", title: "UI + Mock Implementation", active: true },
+                                { phase: "Phase 1", title: "UI + Mock Implementation", active: false },
                                 { phase: "Phase 2", title: "Encrypted Payload Routing", active: false },
-                                { phase: "Phase 3", title: "Arcium Integration & TEE Deployment", active: false },
+                                { phase: "Phase 3", title: "Arcium Integration & TEE Deployment 🚧", active: true },
                                 { phase: "Phase 4", title: "Mainnet Deployment", active: false },
                             ].map((item, i) => (
                                 <div key={i} className="relative">
