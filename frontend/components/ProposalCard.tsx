@@ -8,9 +8,10 @@ import { submitEncryptedVote } from "../lib/program";
 interface ProposalCardProps {
     proposal: Proposal;
     onVoteSuccess?: () => void;
+    children?: React.ReactNode;
 }
 
-export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onVoteSuccess }) => {
+export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onVoteSuccess, children }) => {
     const wallet = useWallet();
     const [isVoting, setIsVoting] = useState(false);
     const [mounted, setMounted] = useState(false);
@@ -91,25 +92,29 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onVoteSucc
                         </div>
                     </div>
 
-                    {statusKey === 'active' && wallet.connected && (
-                        <div className="flex gap-3 pt-2">
-                            <button
-                                onClick={() => handleVote(1)}
-                                disabled={isVoting}
-                                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 text-sm font-bold transition-colors disabled:opacity-50"
-                            >
-                                {isVoting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                                Vote For
-                            </button>
-                            <button
-                                onClick={() => handleVote(2)}
-                                disabled={isVoting}
-                                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-sm font-bold transition-colors disabled:opacity-50"
-                            >
-                                {isVoting ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
-                                Vote Against
-                            </button>
-                        </div>
+                    {children ? (
+                        children
+                    ) : (
+                        statusKey === 'active' && wallet.connected && (
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    onClick={() => handleVote(1)}
+                                    disabled={isVoting}
+                                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 text-sm font-bold transition-colors disabled:opacity-50"
+                                >
+                                    {isVoting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                                    Vote For
+                                </button>
+                                <button
+                                    onClick={() => handleVote(2)}
+                                    disabled={isVoting}
+                                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-sm font-bold transition-colors disabled:opacity-50"
+                                >
+                                    {isVoting ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
+                                    Vote Against
+                                </button>
+                            </div>
+                        )
                     )}
                 </div>
             </div>
