@@ -8,3 +8,5 @@ target
 .env.local
 .env
 .vercel
+
+deploy-wallet.json
