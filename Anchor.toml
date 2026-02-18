@@ -5,7 +5,7 @@ seeds = false
 skip-lint = false
 
 [programs.devnet]
-gov_encrypt = "A71T7Y4SavyuEHg4yMLWELceX68PTyhwjWbFWy74w1Ah"
+gov_encrypt = "CXKnSTk84CBEmiDBrb7k8agp2g5AMSBUwkSVeqSxwWvh"
 
 [registry]
 url = "https://api.devnet.solana.com"
