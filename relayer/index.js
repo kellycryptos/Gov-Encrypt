@@ -99,16 +99,18 @@ const startServer = async () => {
 
     // 4. Submit Encrypted Vote (Relay to MPC)
     app.post('/api/vote', async (req, res) => {
-        const { proposalId, vote, voterSignature, voterPublicKey } = req.body;
+        const { proposalId, encryptedVote, voterPublicKey } = req.body;
 
         try {
-            console.log(`[Relayer] Received ${vote} vote for ${proposalId} from ${voterPublicKey}`);
+            console.log(`[Relayer] Received Encrypted Vote for Proposal #${proposalId}`);
+            console.log(`[Arcium] Voter: ${voterPublicKey}`);
+            console.log(`[Arcium] Encrypted Blob (x25519): ${encryptedVote ? encryptedVote.substring(0, 32) + "..." : "No Data"}`);
 
             // --- ARCIUM MPC RELAY LOGIC ---
-            // Simulating relay to Arcium nodes
+            // In a real implementation, this would forward the blob to the Arcis Network
             res.json({
                 success: true,
-                message: "Vote relayed to Arcium MPC nodes for private tallying",
+                message: "Vote relayed to Arcium MXE nodes for private tallying",
                 txId: "MPC_" + Math.random().toString(36).substring(7)
             });
         } catch (error) {
