@@ -8,7 +8,16 @@ const nextConfig = {
         "@solana/web3.js"
     ],
     webpack: (config) => {
-        config.resolve.fallback = { fs: false, path: false, os: false, crypto: false, stream: false };
+        config.resolve.fallback = {
+            fs: false,
+            path: false,
+            os: false,
+            crypto: false,
+            stream: false,
+            "pino-pretty": false,
+            lokijs: false,
+            encoding: false
+        };
         return config;
     },
     eslint: {
