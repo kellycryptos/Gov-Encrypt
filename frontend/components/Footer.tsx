@@ -13,6 +13,16 @@ export function Footer() {
                         Built by <a href="https://x.com/kellycryptos" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">@kellycryptos</a>
                     </p>
                 </div>
+                {/* Social Links */}
+                <div className="flex items-center justify-center gap-6 mt-4 text-sm text-slate-500">
+                    <Link href="/docs" className="hover:text-white transition-colors">Docs</Link>
+                    <a href="https://github.com/kellycryptos/Gov-Encrypt" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        GitHub
+                    </a>
+                    <a href="https://x.com/gov_encrypt" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">
+                        X (@gov_encrypt)
+                    </a>
+                </div>
             </div>
         </footer>
     );
