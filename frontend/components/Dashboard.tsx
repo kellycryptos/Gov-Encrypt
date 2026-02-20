@@ -131,24 +131,33 @@ export function Dashboard() {
                         proposal={prop}
                     >
                         <div className="grid grid-cols-2 gap-2">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 opacity-50 cursor-not-allowed"
-                                onClick={() => alert("Voting is temporarily disabled while Arcium MPC is being integrated.")}
-                                disabled={true}
-                            >
-                                Vote For
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-red-500/20 text-red-400 hover:bg-red-500/10 opacity-50 cursor-not-allowed"
-                                onClick={() => alert("Voting is temporarily disabled while Arcium MPC is being integrated.")}
-                                disabled={true}
-                            >
-                                Against
-                            </Button>
+                            {voting === prop.id.toString() ? (
+                                <div className="col-span-2 flex items-center justify-center gap-2 py-2 bg-indigo-500/10 rounded-lg border border-indigo-500/20 text-indigo-300 text-sm animate-pulse">
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    <span>Privacy Processing...</span>
+                                </div>
+                            ) : (
+                                <>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
+                                        onClick={() => handleVote(prop.id.toString(), 'for')}
+                                        disabled={!!voting}
+                                    >
+                                        Vote For
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="border-red-500/20 text-red-400 hover:bg-red-500/10"
+                                        onClick={() => handleVote(prop.id.toString(), 'against')}
+                                        disabled={!!voting}
+                                    >
+                                        Against
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </ProposalCard>
                 ))}

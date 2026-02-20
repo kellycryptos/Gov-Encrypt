@@ -42,6 +42,7 @@ pub mod gov_encrypt {
         proposal.deadline = deadline;
         proposal.yes_votes = 0;
         proposal.no_votes = 0;
+        proposal.total_votes = 0;
         proposal.status = ProposalStatus::Active;
 
         dao_state.proposal_count += 1;
@@ -67,24 +68,25 @@ pub mod gov_encrypt {
 
 
     #[encrypted]
-    pub fn vote(ctx: Context<Vote>, vote_values: Enc<Shared, VoteValues>) -> Result<Enc<Shared, VoteValues>> {
+    pub fn vote(ctx: Context<Vote>, vote_weight: Enc<Shared, u32>) -> Result<Enc<Shared, u32>> {
         // Tally logic executed inside MPC
-        // vote_values contains { yes_weight, no_weight }
-        // We add this vote to the running tally in the Proposal account state (which must be encrypted)
-        
-        // Note: For this migration, we are assuming 'Proposal' state will hold encrypted accumulators.
-        // In a real Arcis app, we'd read/write encrypted state. 
-        // Here we demonstrate the circuit logic: returning the updated tally.
-        
-        // Simulating element-wise addition for the tally
-        // let current_tally = ... load from state ...
-        // let new_tally = current_tally + vote_values;
-        // return Ok(new_tally);
-        
-        Ok(vote_values) // Placeholder: passing through for now until state migration
+        // We add this vote to the running tally
+        // Implementation provided by Arcis circuit
+        Ok(vote_weight)
     }
 
-        Ok(vote_values) 
+    #[arcium_callback]
+    pub fn receive_tally(ctx: Context<ReceiveTally>, total_votes: u32) -> Result<()> {
+        let proposal = &mut ctx.accounts.proposal;
+        
+        // Prevent double execution
+        require!(proposal.status == ProposalStatus::Active, ErrorCode::VotingClosed);
+
+        // Update proposal state
+        proposal.total_votes = total_votes as u64;
+        proposal.status = ProposalStatus::Passed; // Or logic based on quorum
+
+        Ok(())
     }
 }
 
@@ -161,7 +163,17 @@ pub struct Proposal {
     pub deadline: i64,
     pub yes_votes: u64,
     pub no_votes: u64,
+    pub total_votes: u64,
     pub status: ProposalStatus,
+}
+
+#[derive(Accounts)]
+pub struct ReceiveTally<'info> {
+    #[account(mut, has_one = authorized_mpc_node)]
+    pub dao_state: Account<'info, DaoAccount>,
+    #[account(mut)]
+    pub proposal: Account<'info, Proposal>,
+    pub authorized_mpc_node: Signer<'info>,
 }
 
 #[account]

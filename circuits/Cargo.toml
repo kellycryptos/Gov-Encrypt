@@ -1,0 +1,7 @@
+[package]
+name = "gov-encrypt-circuits"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arcis = { git = "https://github.com/arcium-hq/arcis" }
