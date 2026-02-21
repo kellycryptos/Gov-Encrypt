@@ -23,8 +23,12 @@ export class ArciumClient {
         console.log(`[Arcium] Encrypting vote choice '${voteChoice}' with RescueCipher`);
 
         // Mocking the output for now to allow frontend to build without the actual WASM lib
+        // Generate a random payload that looks like real ciphertext for demo purposes
         const mockPayload = new Uint8Array(64);
-        mockPayload.fill(voteChoice);
+        crypto.getRandomValues(mockPayload);
+
+        // Log the simulated ciphertext to the console for demonstration
+        console.log(`[Arcium] Simulated Ciphertext Gen: 0x${Buffer.from(mockPayload).toString('hex').substring(0, 32)}...`);
 
         // Return protocol-compatible payload
         return mockPayload;

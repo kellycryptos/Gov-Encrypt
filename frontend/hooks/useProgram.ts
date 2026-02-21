@@ -69,6 +69,11 @@ export const useProgram = () => {
             if (!program || !wallet.publicKey) {
                 // Fallback to mock if program not ready (dev mode)
                 console.warn("Program not connected, falling back to mock");
+                console.log(`[Arcium Simulation] Encrypting vote '${side}' for Proposal ${proposalId}...`);
+
+                // Simulate delay for "Privacy Processing" if using mock
+                await new Promise(r => setTimeout(r, 2000));
+
                 return await mockApi.submitVote(proposalId, side);
             }
 

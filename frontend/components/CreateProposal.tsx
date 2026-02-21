@@ -27,6 +27,7 @@ export const CreateProposal: React.FC = () => {
             const program = new anchor.Program(idl as any, provider);
 
             const [daoStatePda] = PublicKey.findProgramAddressSync([Buffer.from("dao_state")], PROGRAM_ID);
+            // @ts-ignore
             const daoState = await program.account.daoAccount.fetch(daoStatePda);
 
             const [proposalPda] = PublicKey.findProgramAddressSync(

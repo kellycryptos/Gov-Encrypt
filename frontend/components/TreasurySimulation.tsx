@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "../ui/Card";
+import { Card } from "./ui/Card";
 
 export default function TreasurySimulation() {
     const [simulating, setSimulating] = useState(false);
@@ -30,7 +30,7 @@ export default function TreasurySimulation() {
     };
 
     return (
-        <Card title="Treasury Strategy Simulation" className="max-w-2xl mx-auto">
+        <Card header={<h3 className="text-lg font-bold">Treasury Strategy Simulation</h3>} className="max-w-2xl mx-auto">
             <p className="text-sm text-[var(--muted-foreground)] mb-6 leading-relaxed">
                 Before execution, treasury strategies are privately simulated against proprietary risk models using MPC.
                 Only the aggregated risk score and allocation summary are revealed on-chain.

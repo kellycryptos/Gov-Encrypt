@@ -37,9 +37,10 @@ export const fetchProposals = async (wallet: WalletContextState) => {
         // Fetch all proposal accounts
         // Note: 'proposal' must match the account name in lib.rs (camelCase or PascalCase depending on IDL)
         // In lib.rs it is 'Proposal', so usually 'proposal' in anchor client
+        // @ts-ignore
         const proposals = await program.account.proposal.all();
 
-        return proposals.map(p => ({
+        return proposals.map((p: any) => ({
             id: p.account.id.toString(),
             title: p.account.title,
             description: p.account.description,
