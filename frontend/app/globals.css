@@ -2,111 +2,153 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Arcium / Deep Black Backgrounds */
-  --background: #000000;
-  /* Pure Black */
-  --foreground: #A1A1AA;
-  /* Zinc 400 for body text as requested */
+@layer base {
+  :root {
+    /* Ultra Deep Dark Space Aesthetics */
+    --background: #020205; /* Black with a tiny hint of blue/purple */
+    --foreground: #E4E4E7; /* Zinc-200 */
 
-  /* Cards & Glassmorphism */
-  --card: rgba(10, 10, 10, 0.6);
-  /* Near black with opacity */
-  --card-foreground: #F1F1F1;
-  /* Zinc 100 for Headings/Card Content */
+    /* Glassmorphism Cards */
+    --card: rgba(10, 10, 15, 0.5);
+    --card-foreground: #F8FAFC; 
 
-  /* Brand Colors */
-  --primary: #6D45FF;
-  /* Arcium Purple */
-  --primary-foreground: #ffffff;
+    /* Primary Brand: Arcium Purple */
+    --primary: #6D45FF;
+    --primary-foreground: #ffffff;
 
-  --secondary: #18181b;
-  /* Zinc 900 */
-  --secondary-foreground: #fafafa;
-  /* Zinc 50 */
+    --secondary: #18181b;
+    --secondary-foreground: #fafafa;
 
-  --muted: #27272a;
-  /* Zinc 800 */
-  --muted-foreground: #71717a;
-  /* Zinc 500 */
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
 
-  --accent: #5A33EE;
-  /* Darker Purple */
-  --accent-foreground: #ffffff;
+    --accent: #8b5cf6; /* Violet */
+    --accent-foreground: #ffffff;
 
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
 
-  --border: rgba(255, 255, 255, 0.1);
-  /* Subtle White Border for Glassmorphism */
-  --input: rgba(39, 39, 42, 0.5);
-  --ring: #6D45FF;
+    /* Subtle borders for the premium glass look */
+    --border: rgba(255, 255, 255, 0.06);
+    --input: rgba(39, 39, 42, 0.4);
+    --ring: #6D45FF;
 
-  --radius: 0.75rem;
-}
-
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  background-image:
-    radial-gradient(circle at center, rgba(109, 69, 255, 0.15) 0, transparent 40%),
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 100% 100%, 40px 40px, 40px 40px;
-  background-attachment: fixed;
-}
-
-.glass-card {
-  background: var(--card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-/* Wallet Adapter Overrides */
-.wallet-adapter-button {
-  font-family: 'Inter', system-ui, sans-serif !important;
-  font-weight: 600 !important;
-  height: 40px !important;
-  background-color: var(--primary) !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 0 15px rgba(109, 69, 255, 0.3) !important;
-}
-
-.wallet-adapter-button:hover {
-  background-color: #5A33EE !important;
-  box-shadow: 0 0 25px rgba(109, 69, 255, 0.5) !important;
-}
-
-@media (max-width: 768px) {
-  .wallet-adapter-button {
-    height: 36px !important;
-    padding: 0 8px !important;
-    font-size: 13px !important;
-    max-width: 140px !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
+    --radius: 1rem;
   }
 }
 
-.wallet-adapter-modal-wrapper {
-  background: #0a0a0a !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    /* Inter font by default */
+    font-family: var(--font-inter), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    /* State of the art Mesh Gradient + Grid */
+    background-image:
+      radial-gradient(circle at 15% 50%, rgba(109, 69, 255, 0.15), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.1), transparent 25%),
+      radial-gradient(circle at 50% 80%, rgba(30, 27, 75, 0.4), transparent 40%),
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    background-attachment: fixed;
+  }
+
+  /* Make headings use Outfit */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-outfit), var(--font-inter), sans-serif;
+  }
 }
 
-.glass-card:hover {
-  border-color: rgba(109, 69, 255, 0.4);
-  box-shadow: 0 0 30px rgba(109, 69, 255, 0.15);
+@layer components {
+  .glass-card {
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card:hover {
+    border-color: rgba(109, 69, 255, 0.3);
+    box-shadow: 0 0 30px rgba(109, 69, 255, 0.15), 0 0 10px rgba(139, 92, 246, 0.1);
+    transform: translateY(-4px);
+  }
+
+  /* Wallet Adapter Overrides */
+  .wallet-adapter-button {
+    font-family: var(--font-outfit), sans-serif !important;
+    font-weight: 600 !important;
+    height: 48px !important;
+    padding: 0 24px !important;
+    border-radius: 9999px !important;
+    background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 0 20px rgba(109, 69, 255, 0.4) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+  }
+
+  .wallet-adapter-button:hover {
+    background: linear-gradient(135deg, #7B56FF, #9D75FF) !important;
+    box-shadow: 0 0 30px rgba(109, 69, 255, 0.6) !important;
+    transform: scale(1.02) !important;
+  }
+
+  @media (max-width: 768px) {
+    .wallet-adapter-button {
+      height: 40px !important;
+      padding: 0 16px !important;
+      font-size: 14px !important;
+      max-width: 140px !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+  }
+
+  .wallet-adapter-modal-wrapper {
+    background: #020205 !important;
+    border: 1px solid rgba(109, 69, 255, 0.2) !important;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 30px rgba(109, 69, 255, 0.1) !important;
+    border-radius: 1.5rem !important;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-400;
+  }
 }
 
-.text-gradient {
-  background: linear-gradient(to right, #6D45FF, #BCA6FF);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Custom Utilities for Animations */
+.animate-gradient-x {
+  animation: gradient-x 10s ease infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.float-slow {
+  animation: float 6s ease-in-out infinite;
+}
+
+.float-medium {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
